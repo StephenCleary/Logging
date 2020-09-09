@@ -1,0 +1,61 @@
+<Project>
+  <!-- Project-specific settings -->
+  <PropertyGroup>
+    <VersionPrefix>1.0.0-pre01</VersionPrefix>
+    <Authors>Stephen Cleary</Authors>
+    <Description>Capture logging scopes at the time the exception is thrown.</Description>
+    <PackageTags>logging;exception;scope</PackageTags>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <!-- Project quality settings -->
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(CI)'=='true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Package settings -->
+  <PropertyGroup>
+    <PackageProjectUrl>https://github.com/$(GITHUB_REPOSITORY)</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <!-- Icon file -->
+  <PropertyGroup>
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\icon.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <!-- Source debugging -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <!-- Include reference assemblies -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <!-- Versioning -->
+  <PropertyGroup Condition="'$(CI)'!='true'">
+    <VersionSuffix>dev</VersionSuffix>
+  </PropertyGroup>
+</Project>
