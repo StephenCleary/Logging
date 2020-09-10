@@ -19,10 +19,21 @@ namespace WorkerService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await Task.Delay(1000, stoppingToken);
+                using (_logger.BeginScope("Work item {workItemId}", 13))
+                {
+                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    await Task.Delay(1000, stoppingToken);
+                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    await Task.Delay(1000, stoppingToken);
+                    throw new InvalidOperationException("Test exception.");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unexpected error.");
+                throw;
             }
         }
     }
