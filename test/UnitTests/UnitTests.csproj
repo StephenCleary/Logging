@@ -17,4 +17,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nito.LogExceptionContext\Nito.LogExceptionContext.csproj" />
+  </ItemGroup>
+
 </Project>
