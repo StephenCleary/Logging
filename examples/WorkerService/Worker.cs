@@ -21,6 +21,7 @@ namespace WorkerService
         {
             try
             {
+                // Pretend `13` is a correlation GUID, user id, request url, or other Very Useful Information.
                 using (_logger.BeginScope("Work item {workItemId}", 13))
                 {
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
