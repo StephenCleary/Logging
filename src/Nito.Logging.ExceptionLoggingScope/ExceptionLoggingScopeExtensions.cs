@@ -16,19 +16,20 @@ namespace Nito.Logging
     public static class ExceptionLoggingScopeExtensions
     {
         /// <summary>
-        /// Captures logging scopes when exceptions are thrown, and applies those scopes when exceptions are logged.
+        /// Adds the types necessary to capture logging scopes when exceptions are thrown.
+        /// Use <see cref="BeginCapturedExceptionLoggingScopes"/> to retrieve the logging scopes from an exception and apply them while logging.
         /// </summary>
-        public static IHostBuilder CaptureLoggingScopesForExceptions(this IHostBuilder builder)
+        public static IServiceCollection AddExceptionLoggingScopes(this IServiceCollection services)
         {
-            _ = builder ?? throw new ArgumentNullException(nameof(builder));
+            _ = services ?? throw new ArgumentNullException(nameof(services));
 
-            return builder.ConfigureServices((context, services) =>
-            {
-                var loggingScopes = new LoggingScopes();
-                var subscriber = new ExceptionLoggingScopesSubscriber(loggingScopes);
-                services.AddSingleton(subscriber);
-                services.AddSingleton<ILoggerProvider>(new LoggingScopeTrackingLoggerProvider(loggingScopes));
-            });
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            var loggingScopes = new LoggingScopes();
+            var subscriber = new ExceptionLoggingScopesSubscriber(loggingScopes);
+            services.AddSingleton(subscriber);
+            services.AddSingleton<ILoggerProvider>(new LoggingScopeTrackingLoggerProvider(loggingScopes));
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            return services;
         }
 
         /// <summary>

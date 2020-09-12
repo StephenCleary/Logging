@@ -17,9 +17,9 @@ namespace WorkerService
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .CaptureLoggingScopesForExceptions()
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddExceptionLoggingScopes();
                     services.AddHostedService<Worker>();
                 });
     }
