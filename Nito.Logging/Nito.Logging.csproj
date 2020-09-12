@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <IsMetapackage>true</IsMetapackage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Nito.Logging.ExceptionContext\Nito.Logging.ExceptionContext.csproj" />
+  </ItemGroup>
+
+</Project>

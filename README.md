@@ -1,8 +1,8 @@
 ![Logo](src/icon.png)
 
-# Nito.Logging.ExceptionContext [![Build status](https://github.com/StephenCleary/Logging/workflows/Build/badge.svg)](https://github.com/StephenCleary/Logging/actions?query=workflow%3ABuild) [![codecov](https://codecov.io/gh/StephenCleary/Logging/branch/master/graph/badge.svg)](https://codecov.io/gh/StephenCleary/Logging) [![NuGet version](https://badge.fury.io/nu/Nito.Logging.svg)](https://www.nuget.org/packages/Nito.Logging) [![API docs](https://img.shields.io/badge/API-dotnetapis-blue.svg)](http://dotnetapis.com/pkg/Nito.Logging)
+# Nito.Logging [![Build status](https://github.com/StephenCleary/Logging/workflows/Build/badge.svg)](https://github.com/StephenCleary/Logging/actions?query=workflow%3ABuild) [![codecov](https://codecov.io/gh/StephenCleary/Logging/branch/master/graph/badge.svg)](https://codecov.io/gh/StephenCleary/Logging) [![NuGet version](https://badge.fury.io/nu/Nito.Logging.svg)](https://www.nuget.org/packages/Nito.Logging) [![API docs](https://img.shields.io/badge/API-dotnetapis-blue.svg)](http://dotnetapis.com/pkg/Nito.Logging)
 
-Capture logging scopes at the time the exception is thrown.
+Logging enhancers for using scopes with Microsoft.Extensions.Logging.
 
 # What It Does
 
@@ -15,7 +15,7 @@ In other words, if you find your exception logs are missing useful information f
 # Getting Started
 
 Three simple steps:
-1. Install `Nito.Logging.ExceptionContext`.
+1. Install [the `Nito.Logging` package](https://www.nuget.org/packages/Nito.Logging).
 1. TODO - one line of code.
 1. Your exception logs now have logging contexts. Treat yourself to ice cream!
 
