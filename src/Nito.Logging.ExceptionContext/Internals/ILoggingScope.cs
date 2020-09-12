@@ -8,7 +8,7 @@ namespace Nito.Logging.Internals
     /// <summary>
     /// A captured logging scope.
     /// </summary>
-    public interface IScope
+    public interface ILoggingScope
     {
         /// <summary>
         /// Applies this scope to the logger.
@@ -19,12 +19,12 @@ namespace Nito.Logging.Internals
     /// <summary>
     /// A captured scope.
     /// </summary>
-    public sealed class Scope<T> : IScope
+    public sealed class LoggingScope<T> : ILoggingScope
     {
         /// <summary>
         /// Creates a scope.
         /// </summary>
-        public Scope(T value)
+        public LoggingScope(T value)
         {
             Value = value;
         }

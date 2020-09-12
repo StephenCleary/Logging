@@ -12,12 +12,12 @@ namespace Nito.Logging.Internals
     /// </summary>
     public sealed class LoggingScopes
     {
-        private readonly AsyncLocal<ImmutableStack<IScope>> _capturedScopes = new AsyncLocal<ImmutableStack<IScope>>();
+        private readonly AsyncLocal<ImmutableStack<ILoggingScope>> _capturedScopes = new AsyncLocal<ImmutableStack<ILoggingScope>>();
 
         /// <summary>
         /// Gets the current stack of scopes.
         /// </summary>
-        public ImmutableStack<IScope> CurrentScopes => _capturedScopes.Value ?? ImmutableStack<IScope>.Empty;
+        public ImmutableStack<ILoggingScope> CurrentScopes => _capturedScopes.Value ?? ImmutableStack<ILoggingScope>.Empty;
 
         /// <summary>
         /// Pushes a logging scope onto the stack. Returns a disposable that pops this logging scope when disposed.
@@ -25,8 +25,8 @@ namespace Nito.Logging.Internals
         public IDisposable PushLoggingScope<TState>(TState state)
         {
             var originalCapturedScopesValue = _capturedScopes.Value;
-            var scopeStack = originalCapturedScopesValue ?? ImmutableStack<IScope>.Empty;
-            scopeStack = scopeStack.Push(new Scope<TState>(state));
+            var scopeStack = originalCapturedScopesValue ?? ImmutableStack<ILoggingScope>.Empty;
+            scopeStack = scopeStack.Push(new LoggingScope<TState>(state));
             _capturedScopes.Value = scopeStack;
             return new AnonymousDisposable(() => _capturedScopes.Value = originalCapturedScopesValue!);
         }
