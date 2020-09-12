@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 namespace Nito.Logging.Internals
 {
     /// <summary>
-    /// A logging provider that just tracks scopes.
+    /// A logging provider that just tracks logging scopes.
     /// </summary>
-    public sealed class ScopeTrackingLoggerProvider : ILoggerProvider
+    public sealed class LoggingScopeTrackingLoggerProvider : ILoggerProvider
     {
         private readonly LoggingScopes _loggingScopes;
         private readonly Logger _logger;
@@ -16,7 +16,7 @@ namespace Nito.Logging.Internals
         /// <summary>
         /// Creates the logging provider.
         /// </summary>
-        public ScopeTrackingLoggerProvider(LoggingScopes loggingScopes)
+        public LoggingScopeTrackingLoggerProvider(LoggingScopes loggingScopes)
         {
             _loggingScopes = loggingScopes;
             _logger = new Logger(this);
@@ -31,9 +31,9 @@ namespace Nito.Logging.Internals
 
         private sealed class Logger : ILogger
         {
-            private readonly ScopeTrackingLoggerProvider _provider;
+            private readonly LoggingScopeTrackingLoggerProvider _provider;
 
-            public Logger(ScopeTrackingLoggerProvider provider)
+            public Logger(LoggingScopeTrackingLoggerProvider provider)
             {
                 _provider = provider;
             }

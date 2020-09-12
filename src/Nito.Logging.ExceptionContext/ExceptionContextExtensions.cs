@@ -26,7 +26,7 @@ namespace Nito.Logging
                 var loggingScopes = new LoggingScopes();
                 var subscriber = new ExceptionLoggingScopesSubscriber(loggingScopes);
                 services.AddSingleton(subscriber);
-                services.AddSingleton<ILoggerProvider>(new ScopeTrackingLoggerProvider(loggingScopes));
+                services.AddSingleton<ILoggerProvider>(new LoggingScopeTrackingLoggerProvider(loggingScopes));
             });
         }
 
