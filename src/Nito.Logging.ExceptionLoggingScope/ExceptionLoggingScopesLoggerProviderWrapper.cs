@@ -39,7 +39,7 @@ namespace Nito.Logging
 
             public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
             {
-                using var _ = _innerLogger.BeginCapturedExceptionScopes(exception);
+                using var _ = _innerLogger.BeginCapturedExceptionLoggingScopes(exception);
                 _innerLogger.Log(logLevel, eventId, state, exception, formatter);
             }
 

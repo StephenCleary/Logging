@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Nito.Logging.ExceptionContext\Nito.Logging.ExceptionContext.csproj" />
+    <ProjectReference Include="..\..\src\Nito.Logging.ExceptionLoggingScope\Nito.Logging.ExceptionLoggingScope.csproj" />
   </ItemGroup>
 
 </Project>

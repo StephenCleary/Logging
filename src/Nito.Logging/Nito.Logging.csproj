@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nito.Logging.ExceptionContext\Nito.Logging.ExceptionContext.csproj" />
+    <ProjectReference Include="..\Nito.Logging.ExceptionLoggingScope\Nito.Logging.ExceptionLoggingScope.csproj" />
   </ItemGroup>
 
 </Project>

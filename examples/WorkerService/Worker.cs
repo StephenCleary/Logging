@@ -36,7 +36,7 @@ namespace WorkerService
             catch (Exception e)
             {
                 // Example code representing a high-level catch (e.g., an early exception handling middleware).
-                using (_logger.BeginCapturedExceptionScopes(e))
+                using (_logger.BeginCapturedExceptionLoggingScopes(e))
                     _logger.LogError(e, "Unexpected error.");
                 throw;
             }

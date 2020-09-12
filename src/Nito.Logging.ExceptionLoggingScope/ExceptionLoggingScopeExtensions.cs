@@ -10,14 +10,14 @@ using Nito.Logging.Internals;
 namespace Nito.Logging
 {
     /// <summary>
-    /// Provides extension methods for Nito.Logging.ExceptionContext.
+    /// Provides extension methods for Nito.Logging.ExceptionLoggingScope.
     /// </summary>
-    public static class ExceptionContextExtensions
+    public static class ExceptionLoggingScopeExtensions
     {
         /// <summary>
         /// Captures logging scopes when exceptions are thrown, and applies those scopes when exceptions are logged.
         /// </summary>
-        public static IHostBuilder CaptureLoggingContextForExceptions(this IHostBuilder builder)
+        public static IHostBuilder CaptureLoggingScopesForExceptions(this IHostBuilder builder)
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
 
@@ -35,7 +35,7 @@ namespace Nito.Logging
         /// </summary>
         /// <param name="logger">The logger on which to apply the scopes. May not be <c>null</c>.</param>
         /// <param name="exception">The exception holding the captured scopes. May be <c>null</c>.</param>
-        public static IDisposable? BeginCapturedExceptionScopes(this ILogger logger, Exception? exception)
+        public static IDisposable? BeginCapturedExceptionLoggingScopes(this ILogger logger, Exception? exception)
         {
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
