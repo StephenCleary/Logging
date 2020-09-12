@@ -9,13 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.Logging.ExceptionLoggi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B4C23DC3-E9C8-4BB8-AB67-C69060CF9C6D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{9400A14A-A04D-4F8A-B11B-DE4515FF76D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExceptionLoggingScopeUnitTests", "test\ExceptionLoggingScopeUnitTests\ExceptionLoggingScopeUnitTests.csproj", "{9400A14A-A04D-4F8A-B11B-DE4515FF76D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{A9C19C38-9505-483B-80CD-3B17DB7B9694}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "examples\WorkerService\WorkerService.csproj", "{F3A13786-DFDF-42BD-902E-201CC9A97B5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nito.Logging", "src\Nito.Logging\Nito.Logging.csproj", "{8750FED5-CB42-4DF7-8483-E595CF4CA954}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.Logging", "src\Nito.Logging\Nito.Logging.csproj", "{8750FED5-CB42-4DF7-8483-E595CF4CA954}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
