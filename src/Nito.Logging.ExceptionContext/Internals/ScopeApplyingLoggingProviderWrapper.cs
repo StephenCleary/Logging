@@ -44,8 +44,13 @@ namespace Nito.Logging.ExceptionContext.Internals
                 if (scopes != null)
                 {
                     foreach (var scope in scopes)
-                        disposable.Add(scope.Begin(_innerLogger));
+                    {
+                        var innerScope = scope.Begin(_innerLogger);
+                        if (innerScope != null)
+                            disposable.Add(innerScope);
+                    }
                 }
+
                 _innerLogger.Log(logLevel, eventId, state, exception, formatter);
             }
 
