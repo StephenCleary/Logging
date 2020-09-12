@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
-namespace Nito.Logging.Internals
+namespace Nito.Logging
 {
     /// <summary>
     /// A logging provider wrapper that applies scopes attached to exceptions.
     /// This does not work with .NET Core's Dependency Injection (due to limitations of the .NET Core DI and how the options pattern supersedes it), but could be useful with other DI providers.
     /// </summary>
-    public sealed class ScopeApplyingLoggingProviderWrapper : ILoggerProvider
+    public sealed class ExceptionLoggingScopesLoggerProviderWrapper : ILoggerProvider
     {
         private readonly ILoggerProvider _innerProvider;
 
         /// <summary>
         /// Creates a provider wrapping the specified provider.
         /// </summary>
-        public ScopeApplyingLoggingProviderWrapper(ILoggerProvider innerProvider)
+        public ExceptionLoggingScopesLoggerProviderWrapper(ILoggerProvider innerProvider)
         {
             _innerProvider = innerProvider;
         }
