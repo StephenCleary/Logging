@@ -24,11 +24,21 @@ namespace WorkerService
                 .CaptureLoggingContextForExceptions()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    var existing = services.FirstOrDefault(x => x.ImplementationType == typeof(ConsoleLoggerProvider));
-                    services.Remove(existing);
-                    services.AddSingleton<ConsoleLoggerProvider>();
-                    services.AddSingleton<ILoggerProvider>(provider => new ScopeApplyingLoggingProviderWrapper(provider.GetService<ConsoleLoggerProvider>()));
+                    services.Decorate<ILoggerProvider, ScopeApplyingLoggingProviderWrapper>();
+
+                    //var existing = services.FirstOrDefault(x => x.ImplementationType == typeof(ConsoleLoggerProvider));
+                    //services.Remove(existing);
+                    //services.AddSingleton<ILoggerProvider>(provider => new ScopeApplyingLoggingProviderWrapper((ILoggerProvider) Create(provider)));
                     services.AddHostedService<Worker>();
+
+                    //object Create(IServiceProvider provider)
+                    //{
+                    //    if (existing.ImplementationInstance != null)
+                    //        return existing.ImplementationInstance;
+                    //    if (existing.ImplementationFactory != null)
+                    //        return existing.ImplementationFactory(provider);
+                    //    return ActivatorUtilities.GetServiceOrCreateInstance(provider, existing.ImplementationType);
+                    //}
                 });
     }
 }
