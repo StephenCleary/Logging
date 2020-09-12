@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +12,7 @@ namespace Nito.Logging.Internals
     {
         private readonly LoggingScopes _loggingScopes = new LoggingScopes();
         private readonly Logger _logger;
-        private readonly EventHandler<FirstChanceExceptionEventArgs> _subscription;
+        private readonly ExceptionLoggingScopesSubscriber _subscriber;
 
         /// <summary>
         /// Creates the logging provider.
@@ -21,14 +20,13 @@ namespace Nito.Logging.Internals
         public ScopeTrackingLoggerProvider()
         {
             _logger = new Logger(this);
-            _subscription = (_, args) => args.Exception.SetScopes(_loggingScopes.CurrentScopes);
-            AppDomain.CurrentDomain.FirstChanceException += _subscription;
+            _subscriber = new ExceptionLoggingScopesSubscriber(_loggingScopes);
         }
 
         /// <summary>
         /// No longer attaches scopes to exceptions.
         /// </summary>
-        public void Dispose() => AppDomain.CurrentDomain.FirstChanceException -= _subscription;
+        public void Dispose() => _subscriber.Dispose();
 
         ILogger ILoggerProvider.CreateLogger(string categoryName) => _logger;
 
