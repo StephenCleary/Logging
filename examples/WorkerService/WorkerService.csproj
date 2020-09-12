@@ -8,4 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.8" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nito.Logging.ExceptionContext\Nito.Logging.ExceptionContext.csproj" />
+  </ItemGroup>
 </Project>

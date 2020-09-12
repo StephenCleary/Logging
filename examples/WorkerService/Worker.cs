@@ -28,6 +28,7 @@ namespace WorkerService
                     await Task.Delay(1000, stoppingToken);
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                     await Task.Delay(1000, stoppingToken);
+
                     throw new InvalidOperationException("Test exception.");
                 }
             }

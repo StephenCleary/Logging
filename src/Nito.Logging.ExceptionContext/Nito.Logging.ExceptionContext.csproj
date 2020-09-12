@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Internals\" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.8" />
+    <PackageReference Include="Nito.ConnectedProperties" Version="4.0.2" />
+    <PackageReference Include="Nito.Disposables" Version="2.1.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
 </Project>
