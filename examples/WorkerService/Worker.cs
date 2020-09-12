@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nito.Logging;
 
 namespace WorkerService
 {
@@ -35,7 +36,8 @@ namespace WorkerService
             catch (Exception e)
             {
                 // Example code representing a high-level catch (e.g., an early exception handling middleware).
-                _logger.LogError(e, "Unexpected error.");
+                using (_logger.BeginCapturedExceptionScopes(e))
+                    _logger.LogError(e, "Unexpected error.");
                 throw;
             }
         }

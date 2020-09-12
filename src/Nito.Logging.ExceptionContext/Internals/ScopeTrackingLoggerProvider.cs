@@ -10,23 +10,22 @@ namespace Nito.Logging.Internals
     /// </summary>
     public sealed class ScopeTrackingLoggerProvider : ILoggerProvider
     {
-        private readonly LoggingScopes _loggingScopes = new LoggingScopes();
+        private readonly LoggingScopes _loggingScopes;
         private readonly Logger _logger;
-        private readonly ExceptionLoggingScopesSubscriber _subscriber;
 
         /// <summary>
         /// Creates the logging provider.
         /// </summary>
-        public ScopeTrackingLoggerProvider()
+        public ScopeTrackingLoggerProvider(LoggingScopes loggingScopes)
         {
+            _loggingScopes = loggingScopes;
             _logger = new Logger(this);
-            _subscriber = new ExceptionLoggingScopesSubscriber(_loggingScopes);
         }
 
         /// <summary>
-        /// No longer attaches scopes to exceptions.
+        /// Noop.
         /// </summary>
-        public void Dispose() => _subscriber.Dispose();
+        public void Dispose() { }
 
         ILogger ILoggerProvider.CreateLogger(string categoryName) => _logger;
 

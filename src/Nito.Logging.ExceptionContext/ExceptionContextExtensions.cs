@@ -23,7 +23,10 @@ namespace Nito.Logging
 
             return builder.ConfigureServices((context, services) =>
             {
-                services.AddSingleton<ILoggerProvider, ScopeTrackingLoggerProvider>();
+                var loggingScopes = new LoggingScopes();
+                var subscriber = new ExceptionLoggingScopesSubscriber(loggingScopes);
+                services.AddSingleton(subscriber);
+                services.AddSingleton<ILoggerProvider>(new ScopeTrackingLoggerProvider(loggingScopes));
             });
         }
 
