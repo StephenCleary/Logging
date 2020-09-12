@@ -16,7 +16,8 @@ In other words, if you find your exception logs are missing useful information f
 
 Three simple steps:
 1. Install [the `Nito.Logging` package](https://www.nuget.org/packages/Nito.Logging).
-1. TODO - one line of code.
+1. Add a call to `CaptureLoggingScopesForExceptions()` in your host startup.
+1. Wrap all exception logging calls in `ILogger.BeginCapturedExceptionLoggingScopes(Exception)`.
 1. Your exception logs now have logging contexts. Treat yourself to ice cream!
 
 # Alternatives
