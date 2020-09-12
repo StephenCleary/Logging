@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Nito.Disposables;
 using Nito.Logging.ExceptionContext.Internals;
 
 namespace Nito.Logging.ExceptionContext
@@ -25,6 +26,37 @@ namespace Nito.Logging.ExceptionContext
             {
                 services.AddSingleton<ILoggerProvider, ScopeTrackingLoggerProvider>();
             });
+        }
+
+        /// <summary>
+        /// Applies any scopes captured on the specified exception.
+        /// </summary>
+        /// <param name="logger">The logger on which to apply the scopes. May not be <c>null</c>.</param>
+        /// <param name="exception">The exception holding the captured scopes. May be <c>null</c>.</param>
+        public static IDisposable? BeginCapturedExceptionScopes(this ILogger logger, Exception? exception)
+        {
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
+            var scopes = exception?.TryGetScopes();
+            if (scopes == null)
+                return null;
+
+            // TODO: don't reapply scopes that are still current.
+
+            // TODO: if there are current scopes *past* what is captured, those should take priority.
+
+            // TODO: ensure scopes are in correct order.
+
+            var disposable = new CollectionDisposable();
+            foreach (var scope in scopes)
+            {
+                var innerScope = scope.Begin(logger);
+                if (innerScope != null)
+                    disposable.Add(innerScope);
+            }
+
+            return disposable;
         }
     }
 }

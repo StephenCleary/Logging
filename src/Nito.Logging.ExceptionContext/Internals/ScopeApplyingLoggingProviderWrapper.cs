@@ -39,18 +39,7 @@ namespace Nito.Logging.ExceptionContext.Internals
 
             public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
             {
-                var scopes = exception?.TryGetScopes();
-                using var disposable = new CollectionDisposable();
-                if (scopes != null)
-                {
-                    foreach (var scope in scopes)
-                    {
-                        var innerScope = scope.Begin(_innerLogger);
-                        if (innerScope != null)
-                            disposable.Add(innerScope);
-                    }
-                }
-
+                using var _ = _innerLogger.BeginCapturedExceptionScopes(exception);
                 _innerLogger.Log(logLevel, eventId, state, exception, formatter);
             }
 
