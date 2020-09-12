@@ -24,9 +24,9 @@ namespace Nito.Logging.ExceptionContext.Internals
         ILogger ILoggerProvider.CreateLogger(string categoryName) => new Logger(_innerProvider.CreateLogger(categoryName));
 
         /// <summary>
-        /// Noop.
+        /// Disposes the wrapped provider.
         /// </summary>
-        public void Dispose() { }
+        public void Dispose() => _innerProvider.Dispose();
 
         private sealed class Logger : ILogger
         {
