@@ -8,6 +8,7 @@ namespace Nito.Logging.ExceptionContext.Internals
 {
     /// <summary>
     /// A logging provider wrapper that applies scopes attached to exceptions.
+    /// This does not work with .NET Core's Dependency Injection (due to limitations of the .NET Core DI and how the options pattern supersedes it), but could be useful with other DI providers.
     /// </summary>
     public sealed class ScopeApplyingLoggingProviderWrapper : ILoggerProvider
     {
