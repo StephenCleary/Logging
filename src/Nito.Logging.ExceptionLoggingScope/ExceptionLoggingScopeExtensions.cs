@@ -42,16 +42,12 @@ namespace Nito.Logging
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
 
-            var scopes = exception?.TryGetLoggingScopes();
+            var scopes = exception?.TryGetLoggingScopes()?.Reverse();
             if (scopes == null)
                 return null;
 
-            // TODO: don't reapply scopes that are still current.
-
-            // TODO: if there are current scopes *past* what is captured, those should take priority.
-
             var disposable = new CollectionDisposable();
-            foreach (var scope in scopes.Reverse())
+            foreach (var scope in scopes)
             {
                 var innerScope = scope.Begin(logger);
                 if (innerScope != null)
