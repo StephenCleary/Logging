@@ -16,7 +16,7 @@ namespace Nito.Logging.ExceptionContext.Internals
         /// <summary>
         /// Sets the scopes for an exception.
         /// </summary>
-        public static void SetScopes(this Exception exception, ImmutableStack<Scope> scopes)
+        public static void SetScopes(this Exception exception, ImmutableStack<IScope> scopes)
         {
             ConnectedProperty.GetConnectedProperty(exception, ScopesName, bypassValidation: true).Set(scopes);
         }
@@ -24,14 +24,14 @@ namespace Nito.Logging.ExceptionContext.Internals
         /// <summary>
         /// Attempts to get the scopes for an exception. Returns <c>null</c> if there are no scopes for this exception.
         /// </summary>
-        public static ImmutableStack<Scope>? TryGetScopes(this Exception exception)
+        public static ImmutableStack<IScope>? TryGetScopes(this Exception exception)
         {
             var prop = ConnectedProperty.GetConnectedProperty(exception, ScopesName, bypassValidation: true);
             if (prop == null)
                 return null;
             if (!prop.TryGet(out var value))
                 return null;
-            return value as ImmutableStack<Scope>;
+            return value as ImmutableStack<IScope>;
         }
     }
 }

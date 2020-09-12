@@ -14,7 +14,7 @@ namespace Nito.Logging.ExceptionContext.Internals
     /// </summary>
     public sealed class ScopeTrackingLoggerProvider : ILoggerProvider
     {
-        private readonly AsyncLocal<ImmutableStack<Scope>> _capturedScopes = new AsyncLocal<ImmutableStack<Scope>>();
+        private readonly AsyncLocal<ImmutableStack<IScope>> _capturedScopes = new AsyncLocal<ImmutableStack<IScope>>();
         private readonly Logger _logger;
         private readonly EventHandler<FirstChanceExceptionEventArgs> _subscription;
 
@@ -31,7 +31,7 @@ namespace Nito.Logging.ExceptionContext.Internals
         /// <summary>
         /// Gets the current stack of scopes.
         /// </summary>
-        public ImmutableStack<Scope> CurrentScopes => _capturedScopes.Value ?? ImmutableStack<Scope>.Empty;
+        public ImmutableStack<IScope> CurrentScopes => _capturedScopes.Value ?? ImmutableStack<IScope>.Empty;
 
         /// <summary>
         /// No longer attaches scopes to exceptions.
@@ -43,7 +43,7 @@ namespace Nito.Logging.ExceptionContext.Internals
         private IDisposable BeginScope<TState>(TState state)
         {
             var originalCapturedScopesValue = _capturedScopes.Value;
-            var scopeStack = originalCapturedScopesValue ?? ImmutableStack<Scope>.Empty;
+            var scopeStack = originalCapturedScopesValue ?? ImmutableStack<IScope>.Empty;
             scopeStack = scopeStack.Push(new Scope<TState>(state));
             _capturedScopes.Value = scopeStack;
             return new AnonymousDisposable(() => _capturedScopes.Value = originalCapturedScopesValue!);

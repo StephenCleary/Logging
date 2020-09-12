@@ -8,18 +8,18 @@ namespace Nito.Logging.ExceptionContext.Internals
     /// <summary>
     /// A captured scope.
     /// </summary>
-    public abstract class Scope
+    public interface IScope
     {
         /// <summary>
         /// Applies this scope to the logger.
         /// </summary>
-        public abstract IDisposable Begin(ILogger logger);
+        IDisposable? Begin(ILogger logger);
     }
 
     /// <summary>
     /// A captured scope.
     /// </summary>
-    public sealed class Scope<T> : Scope
+    public sealed class Scope<T> : IScope
     {
         /// <summary>
         /// Creates a scope.
@@ -35,6 +35,6 @@ namespace Nito.Logging.ExceptionContext.Internals
         public T Value { get; }
 
         /// <inheritdoc />
-        public override IDisposable Begin(ILogger logger) => logger.BeginScope(Value);
+        public IDisposable? Begin(ILogger logger) => logger?.BeginScope(Value);
     }
 }
