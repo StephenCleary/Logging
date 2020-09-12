@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FDC68B78-F338-4E2D-9C66-29CF03A8FAF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nito.LogExceptionContext", "src\Nito.LogExceptionContext\Nito.LogExceptionContext.csproj", "{1F0037C8-4C6B-4668-85FB-1E8664FCE880}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nito.Logging.ExceptionContext", "src\Nito.Logging.ExceptionContext\Nito.Logging.ExceptionContext.csproj", "{1F0037C8-4C6B-4668-85FB-1E8664FCE880}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B4C23DC3-E9C8-4BB8-AB67-C69060CF9C6D}"
 EndProject
