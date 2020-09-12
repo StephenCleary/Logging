@@ -11,22 +11,22 @@ namespace Nito.Logging.Internals
     /// </summary>
     public static class ExceptionExtensions
     {
-        private static readonly string ScopesName = Guid.NewGuid().ToString("N");
+        private static readonly string LoggingScopesName = Guid.NewGuid().ToString("N");
 
         /// <summary>
-        /// Sets the scopes for an exception.
+        /// Sets the logging scopes for an exception.
         /// </summary>
-        public static void SetScopes(this Exception exception, ImmutableStack<ILoggingScope> scopes)
+        public static void SetLoggingScopes(this Exception exception, ImmutableStack<ILoggingScope> loggingScopes)
         {
-            ConnectedProperty.GetConnectedProperty(exception, ScopesName, bypassValidation: true).Set(scopes);
+            ConnectedProperty.GetConnectedProperty(exception, LoggingScopesName, bypassValidation: true).Set(loggingScopes);
         }
 
         /// <summary>
-        /// Attempts to get the scopes for an exception. Returns <c>null</c> if there are no scopes for this exception.
+        /// Attempts to get the logging scopes for an exception. Returns <c>null</c> if there are no logging scopes for this exception.
         /// </summary>
-        public static ImmutableStack<ILoggingScope>? TryGetScopes(this Exception exception)
+        public static ImmutableStack<ILoggingScope>? TryGetLoggingScopes(this Exception exception)
         {
-            var prop = ConnectedProperty.GetConnectedProperty(exception, ScopesName, bypassValidation: true);
+            var prop = ConnectedProperty.GetConnectedProperty(exception, LoggingScopesName, bypassValidation: true);
             if (prop == null)
                 return null;
             if (!prop.TryGet(out var value))

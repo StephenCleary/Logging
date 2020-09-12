@@ -40,7 +40,7 @@ namespace Nito.Logging
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
 
-            var scopes = exception?.TryGetScopes();
+            var scopes = exception?.TryGetLoggingScopes();
             if (scopes == null)
                 return null;
 
