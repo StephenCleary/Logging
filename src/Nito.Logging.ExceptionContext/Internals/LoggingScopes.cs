@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 using Nito.Disposables;
 
 namespace Nito.Logging.Internals
@@ -29,6 +30,15 @@ namespace Nito.Logging.Internals
             scopeStack = scopeStack.Push(new LoggingScope<TState>(state));
             _capturedScopes.Value = scopeStack;
             return new AnonymousDisposable(() => _capturedScopes.Value = originalCapturedScopesValue!);
+        }
+
+        private sealed class LoggingScope<T> : ILoggingScope
+        {
+            private readonly T _value;
+
+            public LoggingScope(T value) => _value = value;
+
+            public IDisposable? Begin(ILogger logger) => logger?.BeginScope(_value);
         }
     }
 }

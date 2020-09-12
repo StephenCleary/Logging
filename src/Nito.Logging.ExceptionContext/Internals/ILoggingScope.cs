@@ -15,26 +15,4 @@ namespace Nito.Logging.Internals
         /// </summary>
         IDisposable? Begin(ILogger logger);
     }
-
-    /// <summary>
-    /// A captured scope.
-    /// </summary>
-    public sealed class LoggingScope<T> : ILoggingScope
-    {
-        /// <summary>
-        /// Creates a scope.
-        /// </summary>
-        public LoggingScope(T value)
-        {
-            Value = value;
-        }
-
-        /// <summary>
-        /// The scope value.
-        /// </summary>
-        public T Value { get; }
-
-        /// <inheritdoc />
-        public IDisposable? Begin(ILogger logger) => logger?.BeginScope(Value);
-    }
 }
