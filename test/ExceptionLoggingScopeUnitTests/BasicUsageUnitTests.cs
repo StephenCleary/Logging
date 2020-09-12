@@ -29,11 +29,55 @@ namespace ExceptionLoggingScopeUnitTests
             }
 
             Assert.Collection(logs.Messages,
-                message => Assert.Collection(message.ScopeValues, kvp =>
+                message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
+        public void ExceptionScope_WhenNested_AreBothCaptured()
+        {
+            var (logs, logger) = InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 13))
+                using (logger.BeginScope("{test2}", 7))
                 {
-                    Assert.Equal("test", kvp.Key);
-                    Assert.Equal(13, kvp.Value);
-                }));
+                    throw new InvalidOperationException();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message =>
+                {
+                    Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
+                    Assert.Equal(7, Assert.Contains("test2", message.ScopeValues));
+                });
+        }
+
+        [Fact]
+        public void ExceptionScope_WhenNestedWithSameKey_InnerOverridesOuter()
+        {
+            var (logs, logger) = InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 13))
+                using (logger.BeginScope("{test}", 7))
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
         }
 
         private static (InMemoryLoggerProvider Logs, ILogger Logger) InitializeLogs()
