@@ -3,10 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <IsMetapackage>true</IsMetapackage>
+    <Description>Capture logging scopes at the time the exception is thrown.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Nito.Logging.ExceptionContext\Nito.Logging.ExceptionContext.csproj" />
+    <ProjectReference Include="..\Nito.Logging.ExceptionContext\Nito.Logging.ExceptionContext.csproj" />
   </ItemGroup>
 
 </Project>

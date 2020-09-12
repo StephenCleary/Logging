@@ -3,7 +3,6 @@
   <PropertyGroup>
     <VersionPrefix>1.0.0-pre01</VersionPrefix>
     <Authors>Stephen Cleary</Authors>
-    <Description>Capture logging scopes at the time the exception is thrown.</Description>
     <PackageTags>logging;exception;scope</PackageTags>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
