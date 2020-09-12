@@ -24,6 +24,7 @@ namespace WorkerService
             {
                 // Pretend `13` is a correlation GUID, user id, request url, or other Very Useful Information.
                 using (_logger.BeginScope("Work item {workItemId}", 13))
+                using (_logger.BeginScope("Next {workItemId}", 7))
                 {
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                     await Task.Delay(1000, stoppingToken);

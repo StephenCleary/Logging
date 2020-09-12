@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,10 +49,8 @@ namespace Nito.Logging
 
             // TODO: if there are current scopes *past* what is captured, those should take priority.
 
-            // TODO: ensure scopes are in correct order.
-
             var disposable = new CollectionDisposable();
-            foreach (var scope in scopes)
+            foreach (var scope in scopes.Reverse())
             {
                 var innerScope = scope.Begin(logger);
                 if (innerScope != null)
