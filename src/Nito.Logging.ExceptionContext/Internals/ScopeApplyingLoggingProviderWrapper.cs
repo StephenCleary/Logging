@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using Nito.Disposables;
 
-namespace Nito.Logging.ExceptionContext.Internals
+namespace Nito.Logging.Internals
 {
     /// <summary>
     /// A logging provider wrapper that applies scopes attached to exceptions.

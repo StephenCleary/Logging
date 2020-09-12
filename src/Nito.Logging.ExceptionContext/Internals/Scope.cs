@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
-namespace Nito.Logging.ExceptionContext.Internals
+namespace Nito.Logging.Internals
 {
     /// <summary>
     /// A captured scope.

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Nito.Logging.ExceptionContext;
+using Nito.Logging;
 
 namespace WorkerService
 {

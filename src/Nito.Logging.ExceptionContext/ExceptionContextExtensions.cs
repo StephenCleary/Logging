@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nito.Disposables;
-using Nito.Logging.ExceptionContext.Internals;
+using Nito.Logging.Internals;
 
-namespace Nito.Logging.ExceptionContext
+namespace Nito.Logging
 {
     /// <summary>
     /// Provides extension methods for Nito.Logging.ExceptionContext.

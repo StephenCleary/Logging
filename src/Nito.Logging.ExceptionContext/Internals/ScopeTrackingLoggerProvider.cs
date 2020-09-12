@@ -7,7 +7,7 @@ using System.Threading;
 using Microsoft.Extensions.Logging;
 using Nito.Disposables;
 
-namespace Nito.Logging.ExceptionContext.Internals
+namespace Nito.Logging.Internals
 {
     /// <summary>
     /// A logging provider that just tracks scopes.

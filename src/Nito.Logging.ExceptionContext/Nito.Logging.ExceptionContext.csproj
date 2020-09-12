@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Description>Library for using scopes with Microsoft.Extensions.Logging.</Description>
+    <RootNamespace>Nito.Logging</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

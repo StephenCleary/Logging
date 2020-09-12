@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Text;
 using Nito.ConnectedProperties;
 
-namespace Nito.Logging.ExceptionContext.Internals
+namespace Nito.Logging.Internals
 {
     /// <summary>
     /// Extension types for scopes on exceptions.
