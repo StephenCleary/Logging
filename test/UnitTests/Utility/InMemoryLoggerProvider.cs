@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using System.Threading;
 using Microsoft.Extensions.Logging;
-using Nito.LogExceptionContext.Internals;
+using Nito.Disposables;
 
 namespace UnitTests.Utility
 {
     public sealed class InMemoryLoggerProvider : ILoggerProvider
     {
         private readonly object _mutex = new object();
+        private readonly AsyncLocal<ImmutableStack<ImmutableDictionary<string, object>>> _scopeStack = new AsyncLocal<ImmutableStack<ImmutableDictionary<string, object>>>();
 
         public void Dispose() { }
 
@@ -24,7 +26,6 @@ namespace UnitTests.Utility
             public EventId EventId { get; set; }
             public Exception Exception { get; set; }
             public string Message { get; set; }
-            public IReadOnlyList<string> ScopeStrings { get; set; }
             public IReadOnlyDictionary<string, object> ScopeValues { get; set; }
         }
 
@@ -32,6 +33,26 @@ namespace UnitTests.Utility
         {
             lock (_mutex)
                 Messages = Messages.Add(message);
+        }
+
+        private IDisposable PushScope(IEnumerable<KeyValuePair<string, object>> scopeData)
+        {
+            var originalScope = _scopeStack.Value;
+            var currentScope = originalScope ?? ImmutableStack<ImmutableDictionary<string, object>>.Empty;
+            var currentScopeData = currentScope.IsEmpty ? ImmutableDictionary<string, object>.Empty : currentScope.Peek();
+            currentScopeData = currentScopeData.SetItems(scopeData);
+            currentScope = currentScope.Push(currentScopeData);
+            _scopeStack.Value = currentScope;
+            return new AnonymousDisposable(() => _scopeStack.Value = originalScope);
+        }
+
+        private ImmutableDictionary<string, object> CurrentScopeData
+        {
+            get
+            {
+                var currentScope = _scopeStack.Value ?? ImmutableStack<ImmutableDictionary<string, object>>.Empty;
+                return currentScope.IsEmpty ? ImmutableDictionary<string, object>.Empty : currentScope.Peek();
+            }
         }
 
         private sealed class Logger : ILogger
@@ -47,16 +68,8 @@ namespace UnitTests.Utility
 
             public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
             {
-                var messageScopeData = ScopeUtility.GetStructuredData(state);
-                var messageScopeString = ScopeUtility.TryGetStringRepresentation(state);
-
-                // TODO: read from captured scopes instead of starting with empty collections.
-                var scopeStrings = new List<string>();
-                if (messageScopeString != null)
-                    scopeStrings.Add(messageScopeString);
-                var scopeValues = new Dictionary<string, object>();
-                foreach (var (key, value) in messageScopeData)
-                    scopeValues[key] = value;
+                var scopeData = _provider.CurrentScopeData;
+                scopeData = scopeData.SetItems(ScopeUtility.GetStructuredData(state));
 
                 _provider.AddMessage(new LogMessage
                 {
@@ -65,18 +78,13 @@ namespace UnitTests.Utility
                     EventId = eventId,
                     Exception = exception,
                     Message = formatter(state, exception),
-                    ScopeStrings = scopeStrings,
-                    ScopeValues = scopeValues,
+                    ScopeValues = scopeData,
                 });
             }
 
             public bool IsEnabled(LogLevel logLevel) => true;
 
-            public IDisposable BeginScope<TState>(TState state)
-            {
-                // TODO: capture scopes.
-                throw new NotImplementedException();
-            }
+            public IDisposable BeginScope<TState>(TState state) => _provider.PushScope(ScopeUtility.GetStructuredData(state));
         }
     }
 }
