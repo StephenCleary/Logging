@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Runtime.ExceptionServices;
 using System.Text;
-using System.Threading;
 using Microsoft.Extensions.Logging;
-using Nito.Disposables;
 
 namespace Nito.Logging.Internals
 {
@@ -14,7 +11,7 @@ namespace Nito.Logging.Internals
     /// </summary>
     public sealed class ScopeTrackingLoggerProvider : ILoggerProvider
     {
-        private readonly AsyncLocal<ImmutableStack<IScope>> _capturedScopes = new AsyncLocal<ImmutableStack<IScope>>();
+        private readonly LoggingScopes _loggingScopes = new LoggingScopes();
         private readonly Logger _logger;
         private readonly EventHandler<FirstChanceExceptionEventArgs> _subscription;
 
@@ -24,14 +21,9 @@ namespace Nito.Logging.Internals
         public ScopeTrackingLoggerProvider()
         {
             _logger = new Logger(this);
-            _subscription = (_, args) => args.Exception.SetScopes(CurrentScopes);
+            _subscription = (_, args) => args.Exception.SetScopes(_loggingScopes.CurrentScopes);
             AppDomain.CurrentDomain.FirstChanceException += _subscription;
         }
-
-        /// <summary>
-        /// Gets the current stack of scopes.
-        /// </summary>
-        public ImmutableStack<IScope> CurrentScopes => _capturedScopes.Value ?? ImmutableStack<IScope>.Empty;
 
         /// <summary>
         /// No longer attaches scopes to exceptions.
@@ -39,15 +31,6 @@ namespace Nito.Logging.Internals
         public void Dispose() => AppDomain.CurrentDomain.FirstChanceException -= _subscription;
 
         ILogger ILoggerProvider.CreateLogger(string categoryName) => _logger;
-
-        private IDisposable BeginScope<TState>(TState state)
-        {
-            var originalCapturedScopesValue = _capturedScopes.Value;
-            var scopeStack = originalCapturedScopesValue ?? ImmutableStack<IScope>.Empty;
-            scopeStack = scopeStack.Push(new Scope<TState>(state));
-            _capturedScopes.Value = scopeStack;
-            return new AnonymousDisposable(() => _capturedScopes.Value = originalCapturedScopesValue!);
-        }
 
         private sealed class Logger : ILogger
         {
@@ -64,7 +47,7 @@ namespace Nito.Logging.Internals
 
             public bool IsEnabled(LogLevel logLevel) => false;
 
-            public IDisposable BeginScope<TState>(TState state) => _provider.BeginScope(state);
+            public IDisposable BeginScope<TState>(TState state) => _provider._loggingScopes.PushLoggingScope(state);
         }
     }
 }

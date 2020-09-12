@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Nito.Logging.Internals
 {
     /// <summary>
-    /// A captured scope.
+    /// A captured logging scope.
     /// </summary>
     public interface IScope
     {
