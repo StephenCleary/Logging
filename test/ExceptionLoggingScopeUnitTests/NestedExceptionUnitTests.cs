@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nito.Logging;
 using Xunit;
 
+#if NO
 namespace ExceptionLoggingScopeUnitTests
 {
     public class NestedExceptionUnitTests
@@ -171,3 +172,4 @@ namespace ExceptionLoggingScopeUnitTests
         }
     }
 }
+#endif
