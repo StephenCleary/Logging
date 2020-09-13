@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using ExceptionLoggingScopeUnitTests.Utility;
@@ -14,7 +13,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_IsCaptured()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -35,7 +34,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_WhenNested_CapturesBoth()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -61,7 +60,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_WhenNestedWithSameKey_InnerOverridesOuter()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -83,7 +82,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_WithSharedScope_CapturesBothScopes()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             using (logger.BeginScope("{shared}", 11))
             {
                 try
@@ -111,7 +110,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_WhenSharedScopeHasSameKey_ThrowScopeOverridesSharedScope()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             using (logger.BeginScope("{test}", 11))
             {
                 try
@@ -135,7 +134,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_WithLogScope_AppliesBothScopes()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -161,7 +160,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_WhenLogScopeHasSameKeyAndIsFirst_ThrowScopeOverridesLogScope()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -183,7 +182,7 @@ namespace ExceptionLoggingScopeUnitTests
         [Fact]
         public void ThrowScope_WhenLogScopeHasSameKeyAndIsLast_LogScopeOverridesThrowScope()
         {
-            var (logs, logger) = InitializeLogs();
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -200,19 +199,6 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
-        }
-
-        private static (InMemoryLoggerProvider Logs, ILogger Logger) InitializeLogs()
-        {
-            var services = new ServiceCollection();
-            services.AddLogging();
-            var logs = new InMemoryLoggerProvider();
-            services.AddSingleton<ILoggerProvider>(logs);
-            services.AddExceptionLoggingScopes();
-            var provider = services.BuildServiceProvider();
-
-            var logger = provider.GetRequiredService<ILogger<BasicUsageUnitTests>>();
-            return (logs, logger);
         }
     }
 }
