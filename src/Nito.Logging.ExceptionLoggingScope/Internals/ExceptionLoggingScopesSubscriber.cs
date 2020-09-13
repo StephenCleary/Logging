@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text;
 
@@ -19,9 +21,18 @@ namespace Nito.Logging.Internals
         {
             _subscription = (_, args) =>
             {
-                var scopes = loggingScopes.CurrentScopes;
-                if (scopes != null)
-                    args.Exception.SetLoggingScopes(scopes);
+                var exceptionScopes = args.Exception.TryFindLoggingScopes() ?? ImmutableStack<ILoggingScope>.Empty;
+                var currentScopes = loggingScopes.CurrentScopes ?? ImmutableStack<ILoggingScope>.Empty;
+
+                // Combine the exception scopes and current scopes:
+                // - Start with the exception scopes.
+                // - Add in any current scopes that are not already included in the exception scopes.
+
+                foreach (var scope in currentScopes.Reverse().Where(x => !exceptionScopes.Contains(x)))
+                    exceptionScopes = exceptionScopes.Push(scope);
+
+                if (!exceptionScopes.IsEmpty)
+                    args.Exception.SetLoggingScopes(exceptionScopes);
             };
             AppDomain.CurrentDomain.FirstChanceException += _subscription;
         }
