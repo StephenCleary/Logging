@@ -328,5 +328,148 @@ namespace ExceptionLoggingScopeUnitTests
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(5, Assert.Contains("test", message.ScopeValues)));
         }
+
+        [Fact]
+        public void UnthrownWrapperWithoutScopes_PropagatesInnerExceptionScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 13))
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
+        public void UnthrownWrapperWithSharedScopes_PropagatesInnerExceptionScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            using (logger.BeginScope("{outer}", 7))
+            {
+                try
+                {
+                    using (logger.BeginScope("{test}", 13))
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                        logger.LogError("message");
+                }
+            }
+
+            Assert.Collection(logs.Messages,
+                message =>
+                {
+                    Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
+                    Assert.Equal(7, Assert.Contains("outer", message.ScopeValues));
+                });
+        }
+
+        [Fact]
+        public void UnthrownWrapperWithSharedScopes_SameKey_TakesExceptionScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            using (logger.BeginScope("{test}", 7))
+            {
+                try
+                {
+                    using (logger.BeginScope("{test}", 13))
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                        logger.LogError("message");
+                }
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
+        public void UnthrownWrapperWithLocalScope_IncludesBothScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 13))
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginScope("{outer}", 7))
+                using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message =>
+                {
+                    Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
+                    Assert.Equal(7, Assert.Contains("outer", message.ScopeValues));
+                });
+        }
+
+        [Fact]
+        public void UnthrownWrapperWithLocalScope_SameKey_ExceptionScopesLast_TakesExceptionScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 13))
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginScope("{test}", 7))
+                using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
+        public void UnthrownWrapperWithLocalScope_SameKey_LocalScopesLast_TakesLocalScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 13))
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                using (logger.BeginScope("{test}", 7))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
+        }
     }
 }
