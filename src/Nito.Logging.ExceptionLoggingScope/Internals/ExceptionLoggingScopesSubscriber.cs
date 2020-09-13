@@ -17,7 +17,12 @@ namespace Nito.Logging.Internals
         /// </summary>
         public ExceptionLoggingScopesSubscriber(LoggingScopes loggingScopes)
         {
-            _subscription = (_, args) => args.Exception.SetLoggingScopes(loggingScopes.CurrentScopes);
+            _subscription = (_, args) =>
+            {
+                var scopes = loggingScopes.CurrentScopes;
+                if (scopes != null)
+                    args.Exception.SetLoggingScopes(scopes);
+            };
             AppDomain.CurrentDomain.FirstChanceException += _subscription;
         }
 

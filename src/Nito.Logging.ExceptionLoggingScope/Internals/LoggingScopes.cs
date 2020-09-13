@@ -16,9 +16,9 @@ namespace Nito.Logging.Internals
         private readonly AsyncLocal<ImmutableStack<ILoggingScope>> _capturedScopes = new AsyncLocal<ImmutableStack<ILoggingScope>>();
 
         /// <summary>
-        /// Gets the current stack of scopes.
+        /// Gets the current stack of scopes. Returns <c>null</c> if there are no logging scopes currently active.
         /// </summary>
-        public ImmutableStack<ILoggingScope> CurrentScopes => _capturedScopes.Value ?? ImmutableStack<ILoggingScope>.Empty;
+        public ImmutableStack<ILoggingScope>? CurrentScopes => _capturedScopes.Value;
 
         /// <summary>
         /// Pushes a logging scope onto the stack. Returns a disposable that pops this logging scope when disposed.

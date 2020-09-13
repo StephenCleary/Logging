@@ -33,7 +33,7 @@ namespace Nito.Logging
         }
 
         /// <summary>
-        /// Applies any scopes captured on the specified exception.
+        /// Applies any scopes captured on the specified exception or its chain of single inner exceptions.
         /// </summary>
         /// <param name="logger">The logger on which to apply the scopes. May not be <c>null</c>.</param>
         /// <param name="exception">The exception holding the captured scopes. May be <c>null</c>.</param>
@@ -42,7 +42,7 @@ namespace Nito.Logging
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
 
-            var scopes = exception?.TryGetLoggingScopes()?.Reverse();
+            var scopes = exception?.TryFindLoggingScopes()?.Reverse();
             if (scopes == null)
                 return null;
 
