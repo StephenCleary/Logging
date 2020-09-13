@@ -40,6 +40,34 @@ namespace ExceptionLoggingScopeUnitTests
         }
 
         [Fact]
+        public void RethrowWithoutScopes_PropagatesInnerExceptionScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                try
+                {
+                    using (logger.BeginScope("{test}", 13))
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
         public void WrapperWithRethrowScope_IncludesBothScopes()
         {
             var (logs, logger) = LoggingTestUtility.InitializeLogs();
@@ -57,6 +85,41 @@ namespace ExceptionLoggingScopeUnitTests
                     using (logger.BeginScope("{wrapper}", 7))
                     {
                         throw new InvalidOperationException("Wrapper", ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message =>
+                {
+                    Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
+                    Assert.Equal(7, Assert.Contains("wrapper", message.ScopeValues));
+                });
+        }
+
+        [Fact]
+        public void RethrowWithRethrowScope_IncludesBothScopes()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                try
+                {
+                    using (logger.BeginScope("{test}", 13))
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    using (logger.BeginScope("{wrapper}", 7))
+                    {
+                        throw;
                     }
                 }
             }
@@ -106,6 +169,37 @@ namespace ExceptionLoggingScopeUnitTests
         }
 
         [Fact]
+        public void RethrowWithRethrowScope_SameKey_RethrowScopeTakesPriority()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                try
+                {
+                    using (logger.BeginScope("{test}", 13))
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    using (logger.BeginScope("{test}", 7))
+                    {
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
         public void WrapperWithSharedScope_SameKey_ThrowScopeTakesPriority()
         {
             var (logs, logger) = LoggingTestUtility.InitializeLogs();
@@ -123,6 +217,37 @@ namespace ExceptionLoggingScopeUnitTests
                     catch (InvalidOperationException ex)
                     {
                         throw new InvalidOperationException("Wrapper", ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
+        public void ThrowWithSharedScope_SameKey_ThrowScopeTakesPriority()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 7))
+                {
+                    try
+                    {
+                        using (logger.BeginScope("{test}", 13))
+                        {
+                            throw new InvalidOperationException();
+                        }
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        throw;
                     }
                 }
             }
@@ -156,6 +281,40 @@ namespace ExceptionLoggingScopeUnitTests
                         using (logger.BeginScope("{test}", 5))
                         {
                             throw new InvalidOperationException("Wrapper", ex);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+
+            Assert.Collection(logs.Messages,
+                message => Assert.Equal(5, Assert.Contains("test", message.ScopeValues)));
+        }
+
+        [Fact]
+        public void RethrowWithSharedScopeAndRethrowScope_SameKey_RethrowScopeTakesPriority()
+        {
+            var (logs, logger) = LoggingTestUtility.InitializeLogs();
+            try
+            {
+                using (logger.BeginScope("{test}", 7))
+                {
+                    try
+                    {
+                        using (logger.BeginScope("{test}", 13))
+                        {
+                            throw new InvalidOperationException();
+                        }
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        using (logger.BeginScope("{test}", 5))
+                        {
+                            throw;
                         }
                     }
                 }
