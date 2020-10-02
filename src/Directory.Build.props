@@ -1,11 +1,12 @@
 <Project>
-  <!-- Project-specific settings -->
-  <PropertyGroup>
-    <VersionPrefix>1.0.0-pre04</VersionPrefix>
-    <Authors>Stephen Cleary</Authors>
-    <PackageTags>logging;exception;scope</PackageTags>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+  <!--
+      Directory.Build.props v2.0
+      - 2.0 Move project-specific properties to `project.props`.
+      - 1.1 Remove workaround for .NET SDK bug that was necesary for coverlet to work.
+      - 1.0 Initial release.
+  -->
+
+  <Import Project="$(MSBuildThisFileDirectory)project.props" />
 
   <!-- Project quality settings -->
   <PropertyGroup>
