@@ -19,18 +19,5 @@ namespace ExceptionLoggingScopeUnitTests.Utility
             var logger = provider.GetRequiredService<ILogger<BasicUsageUnitTests>>();
             action(logs, logger);
         }
-
-        public static (InMemoryLoggerProvider Logs, ILogger Logger) InitializeLogs()
-        {
-            var services = new ServiceCollection();
-            services.AddLogging();
-            var logs = new InMemoryLoggerProvider();
-            services.AddSingleton<ILoggerProvider>(logs);
-            services.AddExceptionLoggingScopes();
-            var provider = services.BuildServiceProvider();
-
-            var logger = provider.GetRequiredService<ILogger<BasicUsageUnitTests>>();
-            return (logs, logger);
-        }
     }
 }
