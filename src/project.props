@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>1.0.0-pre04</VersionPrefix>
+    <VersionPrefix>1.0.0-pre05</VersionPrefix>
     <Authors>Stephen Cleary</Authors>
     <PackageTags>logging;exception;scope</PackageTags>
   </PropertyGroup>
