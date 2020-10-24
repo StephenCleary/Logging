@@ -11,9 +11,8 @@ namespace ExceptionLoggingScopeUnitTests
     public class BasicUsageUnitTests
     {
         [Fact]
-        public void ThrowScope_IsCaptured()
+        public void ThrowScope_IsCaptured() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -29,12 +28,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void ThrowScope_WhenNested_CapturesBoth()
+        public void ThrowScope_WhenNested_CapturesBoth() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -55,12 +53,11 @@ namespace ExceptionLoggingScopeUnitTests
                     Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
                     Assert.Equal(7, Assert.Contains("test2", message.ScopeValues));
                 });
-        }
+        });
 
         [Fact]
-        public void ThrowScope_WhenNestedWithSameKey_InnerOverridesOuter()
+        public void ThrowScope_WhenNestedWithSameKey_InnerOverridesOuter() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -77,12 +74,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void ThrowScope_WithSharedScope_CapturesBothScopes()
+        public void ThrowScope_WithSharedScope_CapturesBothScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             using (logger.BeginScope("{shared}", 11))
             {
                 try
@@ -105,12 +101,11 @@ namespace ExceptionLoggingScopeUnitTests
                     Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
                     Assert.Equal(11, Assert.Contains("shared", message.ScopeValues));
                 });
-        }
+        });
 
         [Fact]
-        public void ThrowScope_WhenSharedScopeHasSameKey_ThrowScopeOverridesSharedScope()
+        public void ThrowScope_WhenSharedScopeHasSameKey_ThrowScopeOverridesSharedScope() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             using (logger.BeginScope("{test}", 11))
             {
                 try
@@ -129,12 +124,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void ThrowScope_WithLogScope_AppliesBothScopes()
+        public void ThrowScope_WithLogScope_AppliesBothScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -155,12 +149,11 @@ namespace ExceptionLoggingScopeUnitTests
                     Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
                     Assert.Equal(7, Assert.Contains("test2", message.ScopeValues));
                 });
-        }
+        });
 
         [Fact]
-        public void ThrowScope_WhenLogScopeHasSameKeyAndIsFirst_ThrowScopeOverridesLogScope()
+        public void ThrowScope_WhenLogScopeHasSameKeyAndIsFirst_ThrowScopeOverridesLogScope() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -177,12 +170,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void ThrowScope_WhenLogScopeHasSameKeyAndIsLast_LogScopeOverridesThrowScope()
+        public void ThrowScope_WhenLogScopeHasSameKeyAndIsLast_LogScopeOverridesThrowScope() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -199,6 +191,6 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
     }
 }

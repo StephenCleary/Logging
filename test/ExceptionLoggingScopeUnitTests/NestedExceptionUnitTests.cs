@@ -12,9 +12,8 @@ namespace ExceptionLoggingScopeUnitTests
     public class NestedExceptionUnitTests
     {
         [Fact]
-        public void WrapperWithoutScopes_PropagatesInnerExceptionScopes()
+        public void WrapperWithoutScopes_PropagatesInnerExceptionScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 try
@@ -37,12 +36,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void RethrowWithoutScopes_PropagatesInnerExceptionScopes()
+        public void RethrowWithoutScopes_PropagatesInnerExceptionScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 try
@@ -65,12 +63,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void WrapperWithRethrowScope_IncludesBothScopes()
+        public void WrapperWithRethrowScope_IncludesBothScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 try
@@ -100,12 +97,11 @@ namespace ExceptionLoggingScopeUnitTests
                     Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
                     Assert.Equal(7, Assert.Contains("wrapper", message.ScopeValues));
                 });
-        }
+        });
 
         [Fact]
-        public void RethrowWithRethrowScope_IncludesBothScopes()
+        public void RethrowWithRethrowScope_IncludesBothScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 try
@@ -135,12 +131,11 @@ namespace ExceptionLoggingScopeUnitTests
                     Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
                     Assert.Equal(7, Assert.Contains("wrapper", message.ScopeValues));
                 });
-        }
+        });
 
         [Fact]
-        public void WrapperWithRethrowScope_SameKey_RethrowScopeTakesPriority()
+        public void WrapperWithRethrowScope_SameKey_RethrowScopeTakesPriority() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 try
@@ -166,12 +161,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void RethrowWithRethrowScope_SameKey_RethrowScopeTakesPriority()
+        public void RethrowWithRethrowScope_SameKey_RethrowScopeTakesPriority() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 try
@@ -197,12 +191,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void WrapperWithSharedScope_SameKey_ThrowScopeTakesPriority()
+        public void WrapperWithSharedScope_SameKey_ThrowScopeTakesPriority() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 7))
@@ -228,12 +221,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void ThrowWithSharedScope_SameKey_ThrowScopeTakesPriority()
+        public void ThrowWithSharedScope_SameKey_ThrowScopeTakesPriority() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 7))
@@ -259,12 +251,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void WrapperWithSharedScopeAndRethrowScope_SameKey_RethrowScopeTakesPriority()
+        public void WrapperWithSharedScopeAndRethrowScope_SameKey_RethrowScopeTakesPriority() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 7))
@@ -293,12 +284,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(5, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void RethrowWithSharedScopeAndRethrowScope_SameKey_RethrowScopeTakesPriority()
+        public void RethrowWithSharedScopeAndRethrowScope_SameKey_RethrowScopeTakesPriority() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 7))
@@ -327,12 +317,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(5, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void UnthrownWrapperWithoutScopes_PropagatesInnerExceptionScopes()
+        public void UnthrownWrapperWithoutScopes_PropagatesInnerExceptionScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -348,12 +337,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void UnthrownWrapperWithSharedScopes_PropagatesInnerExceptionScopes()
+        public void UnthrownWrapperWithSharedScopes_PropagatesInnerExceptionScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             using (logger.BeginScope("{outer}", 7))
             {
                 try
@@ -376,12 +364,11 @@ namespace ExceptionLoggingScopeUnitTests
                     Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
                     Assert.Equal(7, Assert.Contains("outer", message.ScopeValues));
                 });
-        }
+        });
 
         [Fact]
-        public void UnthrownWrapperWithSharedScopes_SameKey_TakesExceptionScopes()
+        public void UnthrownWrapperWithSharedScopes_SameKey_TakesExceptionScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             using (logger.BeginScope("{test}", 7))
             {
                 try
@@ -400,12 +387,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void UnthrownWrapperWithLocalScope_IncludesBothScopes()
+        public void UnthrownWrapperWithLocalScope_IncludesBothScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -426,12 +412,11 @@ namespace ExceptionLoggingScopeUnitTests
                     Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
                     Assert.Equal(7, Assert.Contains("outer", message.ScopeValues));
                 });
-        }
+        });
 
         [Fact]
-        public void UnthrownWrapperWithLocalScope_SameKey_ExceptionScopesLast_TakesExceptionScopes()
+        public void UnthrownWrapperWithLocalScope_SameKey_ExceptionScopesLast_TakesExceptionScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -448,12 +433,11 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
 
         [Fact]
-        public void UnthrownWrapperWithLocalScope_SameKey_LocalScopesLast_TakesLocalScopes()
+        public void UnthrownWrapperWithLocalScope_SameKey_LocalScopesLast_TakesLocalScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
         {
-            var (logs, logger) = LoggingTestUtility.InitializeLogs();
             try
             {
                 using (logger.BeginScope("{test}", 13))
@@ -470,6 +454,6 @@ namespace ExceptionLoggingScopeUnitTests
 
             Assert.Collection(logs.Messages,
                 message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
-        }
+        });
     }
 }

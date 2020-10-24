@@ -23,12 +23,13 @@ namespace Nito.Logging
         {
             _ = services ?? throw new ArgumentNullException(nameof(services));
 
-#pragma warning disable CA2000 // Dispose objects before losing scope
             var loggingScopes = new LoggingScopes();
-            var subscriber = new ExceptionLoggingScopesSubscriber(loggingScopes);
-            services.AddSingleton(subscriber);
-            services.AddSingleton<ILoggerProvider>(new LoggingScopeTrackingLoggerProvider(loggingScopes));
-#pragma warning restore CA2000 // Dispose objects before losing scope
+            services.AddSingleton(_ => new ExceptionLoggingScopesSubscriber(loggingScopes));
+            services.AddSingleton<ILoggerProvider>(provider =>
+            {
+                _ = provider.GetService<ExceptionLoggingScopesSubscriber>();
+                return new LoggingScopeTrackingLoggerProvider(loggingScopes);
+            });
             return services;
         }
 
