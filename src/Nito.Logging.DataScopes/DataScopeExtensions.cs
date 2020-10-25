@@ -45,7 +45,6 @@ namespace Nito.Logging
         public static IDisposable BeginDataScope(this ILogger logger, object data)
         {
             _ = data ?? throw new ArgumentNullException(nameof(data));
-            // TODO: ensure dictionaries don't end up here.
             return logger.BeginDataScope(AnonymousObjectData(data));
         }
 
