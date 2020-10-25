@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <NoTests>true</NoTests>
   </PropertyGroup>
 
   <ItemGroup>
