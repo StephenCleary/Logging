@@ -14,11 +14,57 @@ This library has two parts:
 
 First, install [the `Nito.Logging` package](https://www.nuget.org/packages/Nito.Logging).
 
-To attach data scopes to your logs, call `BeginDataScope` on any `ILogger` or `ILogger<T>`. You can pass an anonymous object, any number of `(string, object)` tuples, or a collection of `KeyValuePair<string, object>` (such as a `Dictionary<string, object>`).
+To attach data scopes to your logs, call `BeginDataScope` on any `ILogger` or `ILogger<T>`. You can pass an anonymous object, any number of `(string, object)` tuples, or a collection of `KeyValuePair<string, object>` (such as a `Dictionary<string, object>`). See [the unit tests](https://github.com/StephenCleary/Logging/blob/master/test/DataScopesUnitTests/BasicUsageUnitTests.cs) for examples.
 
 To preserve logging scopes for exceptions:
 1. Add a call to `AddExceptionLoggingScopes()` in your service registration.
 1. Call `ILogger.BeginCapturedExceptionLoggingScopes(Exception)` before logging the exception.
+
+Your service registration will look something like this:
+
+```C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddExceptionLoggingScopes();
+    ...
+}
+```
+
+Your exception logging will look something like this:
+
+```C#
+// This example uses custom middleware.
+// It's also possible to retrieve and log the exception from an error controller if using the standard exception handling middleware.
+
+public class ExceptionLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionLoggingMiddleware> _logger;
+
+    public ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task Invoke(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (Exception ex)
+        {
+            using (_logger.BeginCapturedExceptionLoggingScopes(ex))
+                _logger.Log(ex, "An error occurred.");
+            throw;
+        }
+    }
+}
+
+// Don't forget to register the middleware (early in the pipeline):
+app.UseMiddleware<ExceptionLoggingMiddleware>();
+```
 
 # Alternatives
 
