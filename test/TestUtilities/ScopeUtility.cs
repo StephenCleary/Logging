@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace TestUtilities
@@ -7,6 +8,7 @@ namespace TestUtilities
     /// Contains the logic used to extract scope information used in Microsoft.Extensions.Logging.
     /// See https://nblumhardt.com/2016/11/ilogger-beginscope/ for details.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class ScopeUtility
     {
         /// <summary>

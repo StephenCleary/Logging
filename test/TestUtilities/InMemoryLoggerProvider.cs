@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Nito.Disposables;
 
 namespace TestUtilities
 {
+    [ExcludeFromCodeCoverage]
     public sealed class InMemoryLoggerProvider : ILoggerProvider
     {
         private readonly object _mutex = new object();
@@ -18,6 +20,7 @@ namespace TestUtilities
 
         public ImmutableList<LogMessage> Messages { get; private set; } = ImmutableList<LogMessage>.Empty;
 
+        [ExcludeFromCodeCoverage]
         public sealed class LogMessage
         {
             public string CategoryName { get; set; }
@@ -54,6 +57,7 @@ namespace TestUtilities
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private sealed class Logger : ILogger
         {
             private readonly InMemoryLoggerProvider _provider;
