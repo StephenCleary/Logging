@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <IsMetapackage>true</IsMetapackage>
-    <Description>Capture logging scopes at the time the exception is thrown.</Description>
+    <Description>Library for using scopes with Microsoft.Extensions.Logging.</Description>
   </PropertyGroup>
 
   <ItemGroup>

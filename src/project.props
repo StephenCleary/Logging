@@ -3,5 +3,6 @@
     <VersionPrefix>1.0.0-pre05</VersionPrefix>
     <Authors>Stephen Cleary</Authors>
     <PackageTags>logging;exception;scope</PackageTags>
+    <RootNamespace>Nito.Logging</RootNamespace>
   </PropertyGroup>
 </Project>
