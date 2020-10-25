@@ -6,20 +6,20 @@ A library for using scopes with Microsoft.Extensions.Logging.
 
 # What It Does
 
-This library:
-1. Captures logging scopes when an exception is thrown.
-2. Applies those logging scopes when that exception is logged.
-
-In other words, if you find your exception logs are missing useful information from your logging contexts, install this library and enjoy rich logs again!
+This library has two parts:
+1. `DataScopes` provides the `BeginDataScope` extension methods for `ILogger`, which allow you to attach name/value pairs of metadata onto your log messages.
+1. `ExceptionLoggingScope` captures logging scopes when an exception is thrown, and applies those logging scopes when the exception is logged. In other words, if you find your exception logs are missing useful information from your logging contexts, install this library and enjoy rich logs again!
 
 # Getting Started
 
-Three simple steps:
-1. Install [the `Nito.Logging` package](https://www.nuget.org/packages/Nito.Logging).
+First, install [the `Nito.Logging` package](https://www.nuget.org/packages/Nito.Logging).
+
+To attach data scopes to your logs, call `BeginDataScope` on any `ILogger` or `ILogger<T>`. You can pass an anonymous object, any number of `(string, object)` tuples, or a collection of `KeyValuePair<string, object>` (such as a `Dictionary<string, object>`).
+
+To preserve logging scopes for exceptions:
 1. Add a call to `AddExceptionLoggingScopes()` in your service registration.
-1. Wrap all exception logging calls in `ILogger.BeginCapturedExceptionLoggingScopes(Exception)`.
-1. Your exception logs now have logging contexts. Treat yourself to ice cream!
+1. Call `ILogger.BeginCapturedExceptionLoggingScopes(Exception)` before logging the exception.
 
 # Alternatives
 
-- [Throw context enricher for Serilog](https://github.com/Tolyandre/serilog-throw-context-enricher) - similar approach, for Serilog only.
+- [Throw context enricher for Serilog](https://github.com/Tolyandre/serilog-throw-context-enricher) - essentially the same as `ExceptionLoggingScope`, but for Serilog only.
