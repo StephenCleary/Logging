@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Text;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using Nito.Disposables;
 
-namespace ExceptionLoggingScopeUnitTests.Utility
+namespace TestUtilities
 {
     public sealed class InMemoryLoggerProvider : ILoggerProvider
     {

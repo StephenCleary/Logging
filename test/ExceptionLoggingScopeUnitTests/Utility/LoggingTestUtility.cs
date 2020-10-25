@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nito.Logging;
+using TestUtilities;
 
 namespace ExceptionLoggingScopeUnitTests.Utility
 {

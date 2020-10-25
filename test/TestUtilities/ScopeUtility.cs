@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ExceptionLoggingScopeUnitTests.Utility
+namespace TestUtilities
 {
     /// <summary>
     /// Contains the logic used to extract scope information used in Microsoft.Extensions.Logging.
