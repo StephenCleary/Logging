@@ -58,16 +58,18 @@ namespace Nito.Logging
                 yield return new KeyValuePair<string, object?>(prop.Name, prop.GetValue(data));
         }
 
-        private sealed class LogData : IEnumerable<KeyValuePair<string, object?>>
+        private sealed class LogData : IReadOnlyList<KeyValuePair<string, object?>>
         {
-            private readonly IEnumerable<KeyValuePair<string, object?>> _data;
+            private readonly IReadOnlyList<KeyValuePair<string, object?>> _data;
 
-            public LogData(IEnumerable<KeyValuePair<string, object?>> data) => _data = data;
+            public LogData(IEnumerable<KeyValuePair<string, object?>> data) => _data = data is IReadOnlyList<KeyValuePair<string, object?>> list ? list : data.ToList();
 
             public override string ToString() => string.Join(", ", _data.Select(kvp => $"{kvp.Key}={kvp.Value}"));
 
             IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => _data.GetEnumerator();
             IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+            int IReadOnlyCollection<KeyValuePair<string, object?>>.Count => _data.Count;
+            KeyValuePair<string, object?> IReadOnlyList<KeyValuePair<string, object?>>.this[int index] => _data[index];
         }
     }
 }
