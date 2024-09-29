@@ -1,6 +1,6 @@
 ![Logo](src/icon.png)
 
-# Nito.Logging [![Build status](https://github.com/StephenCleary/Logging/workflows/Build/badge.svg)](https://github.com/StephenCleary/Logging/actions?query=workflow%3ABuild) [![codecov](https://codecov.io/gh/StephenCleary/Logging/branch/master/graph/badge.svg)](https://codecov.io/gh/StephenCleary/Logging) [![NuGet version](https://badge.fury.io/nu/Nito.Logging.svg)](https://www.nuget.org/packages/Nito.Logging) [![API docs](https://img.shields.io/badge/API-dotnetapis-blue.svg)](http://dotnetapis.com/pkg/Nito.Logging)
+# Nito.Logging [![Build status](https://github.com/StephenCleary/Logging/workflows/Build/badge.svg)](https://github.com/StephenCleary/Logging/actions?query=workflow%3ABuild) [![codecov](https://codecov.io/gh/StephenCleary/Logging/branch/main/graph/badge.svg)](https://codecov.io/gh/StephenCleary/Logging) [![NuGet version](https://badge.fury.io/nu/Nito.Logging.svg)](https://www.nuget.org/packages/Nito.Logging) [![API docs](https://img.shields.io/badge/API-dotnetapis-blue.svg)](http://dotnetapis.com/pkg/Nito.Logging)
 
 A library for using scopes with Microsoft.Extensions.Logging.
 
@@ -14,7 +14,7 @@ This library has two parts:
 
 First, install [the `Nito.Logging` package](https://www.nuget.org/packages/Nito.Logging).
 
-To attach data scopes to your logs, call `BeginDataScope` on any `ILogger` or `ILogger<T>`. You can pass an anonymous object, any number of `(string, object)` tuples, or a collection of `KeyValuePair<string, object>` (such as a `Dictionary<string, object>`). See [the unit tests](https://github.com/StephenCleary/Logging/blob/master/test/DataScopesUnitTests/BasicUsageUnitTests.cs) for examples.
+To attach data scopes to your logs, call `BeginDataScope` on any `ILogger` or `ILogger<T>`. You can pass an anonymous object, any number of `(string, object)` tuples, or a collection of `KeyValuePair<string, object>` (such as a `Dictionary<string, object>`). See [the unit tests](https://github.com/StephenCleary/Logging/blob/main/test/DataScopesUnitTests/BasicUsageUnitTests.cs) for examples.
 
 To preserve logging scopes for exceptions:
 1. Add a call to `AddExceptionLoggingScopes()` in your service registration.
