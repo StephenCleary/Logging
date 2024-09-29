@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461;net6.0</TargetFrameworks>
     <IsMetapackage>true</IsMetapackage>
     <Description>Library for using scopes with Microsoft.Extensions.Logging.</Description>
   </PropertyGroup>
@@ -9,6 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Nito.Logging.DataScopes\Nito.Logging.DataScopes.csproj" />
     <ProjectReference Include="..\Nito.Logging.ExceptionLoggingScope\Nito.Logging.ExceptionLoggingScope.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
   </ItemGroup>
 
 </Project>
