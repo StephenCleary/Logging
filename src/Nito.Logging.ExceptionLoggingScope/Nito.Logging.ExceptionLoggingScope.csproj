@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Nito.ConnectedProperties" Version="4.0.2" />
-    <PackageReference Include="Nito.Disposables" Version="2.1.0" />
+    <PackageReference Include="Nito.ConnectedProperties" Version="4.1.1" />
+    <PackageReference Include="Nito.Disposables" Version="2.5.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 

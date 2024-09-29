@@ -1,6 +1,11 @@
+(Unreleased)
+
+- [Feature] Upgraded dependencies.
+- [Feature] Prepared code for trimming/single-file/AOT support (`net8.0` only). Trimming/single-file/AOT is not fully supported in this release.
+
 1.0.1
 
-- Workaround for Application Insights. Every other logging system in the world uses `IEnumerable<KeyValuePair<string, object>>`, but Application Insights only takes `IReadOnlyList<KeyValuePair<string, object>>`. So be it, Jedi.
+- [Fix] Workaround for Application Insights. Every other logging system in the world uses `IEnumerable<KeyValuePair<string, object>>`, but Application Insights only takes `IReadOnlyList<KeyValuePair<string, object>>`. So be it, Jedi.
 
 1.0.0
 
