@@ -40,8 +40,12 @@ namespace Nito.Logging
         /// <param name="exception">The exception holding the captured scopes. May be <c>null</c>.</param>
         public static IDisposable? BeginCapturedExceptionLoggingScopes(this ILogger logger, Exception? exception)
         {
+#if NET461 || NETSTANDARD2_0
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
+#else
+            ArgumentNullException.ThrowIfNull(logger);
+#endif
 
             var scopes = exception?.TryFindLoggingScopes()?.Reverse();
             if (scopes == null)
