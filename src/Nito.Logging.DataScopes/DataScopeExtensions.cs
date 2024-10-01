@@ -5,71 +5,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Nito.Logging
+namespace Nito.Logging;
+
+/// <summary>
+/// Provides extension methods for defining data scopes.
+/// </summary>
+public static class DataScopeExtensions
 {
     /// <summary>
-    /// Provides extension methods for defining data scopes.
+    /// Adds a collection of key/value data pairs to the current logging scope.
     /// </summary>
-    public static class DataScopeExtensions
+    public static IDisposable? BeginDataScope(this ILogger logger, IEnumerable<KeyValuePair<string, object?>> data)
     {
-        /// <summary>
-        /// Adds a collection of key/value data pairs to the current logging scope.
-        /// </summary>
-        public static IDisposable BeginDataScope(this ILogger logger, IEnumerable<KeyValuePair<string, object?>> data)
-        {
-            _ = logger ?? throw new ArgumentNullException(nameof(logger));
-            return logger.BeginScope(new LogData(data));
-        }
+        _ = logger ?? throw new ArgumentNullException(nameof(logger));
+        return logger.BeginScope(new LogData(data));
+    }
 
-        /// <summary>
-        /// Adds a collection of key/value data pairs to the current logging scope.
-        /// </summary>
-        public static IDisposable BeginDataScope(this ILogger logger, IEnumerable<(string Key, object? Value)> data) =>
-            logger.BeginDataScope(data.Select(kvp => new KeyValuePair<string, object?>(kvp.Key, kvp.Value)));
+    /// <summary>
+    /// Adds a collection of key/value data pairs to the current logging scope.
+    /// </summary>
+    public static IDisposable? BeginDataScope(this ILogger logger, IEnumerable<(string Key, object? Value)> data) =>
+        logger.BeginDataScope(data.Select(kvp => new KeyValuePair<string, object?>(kvp.Key, kvp.Value)));
 
-        /// <summary>
-        /// Adds any number of key/value pairs to the current logging scope.
-        /// </summary>
-        public static IDisposable BeginDataScope(this ILogger logger, params (string Key, object? Value)[] data) =>
-            logger.BeginDataScope(data.AsEnumerable());
+    /// <summary>
+    /// Adds any number of key/value pairs to the current logging scope.
+    /// </summary>
+    public static IDisposable? BeginDataScope(this ILogger logger, params (string Key, object? Value)[] data) =>
+        logger.BeginDataScope(data.AsEnumerable());
 
-        /// <summary>
-        /// Adds a single key/value pair to the current logging scope.
-        /// </summary>
-        public static IDisposable BeginDataScope(this ILogger logger, (string Key, object? Value) data) =>
-            logger.BeginDataScope(new[] {data});
+    /// <summary>
+    /// Adds a single key/value pair to the current logging scope.
+    /// </summary>
+    public static IDisposable? BeginDataScope(this ILogger logger, (string Key, object? Value) data) =>
+        logger.BeginDataScope(new[] {data});
 
-        /// <summary>
-        /// Adds the properties of an object to the current logging scope.
-        /// </summary>
-        public static IDisposable BeginDataScope(this ILogger logger, object data)
-        {
-            _ = data ?? throw new ArgumentNullException(nameof(data));
-            return logger.BeginDataScope(AnonymousObjectData(data));
-        }
+    /// <summary>
+    /// Adds the properties of an object to the current logging scope.
+    /// </summary>
+    public static IDisposable? BeginDataScope(this ILogger logger, object data)
+    {
+        _ = data ?? throw new ArgumentNullException(nameof(data));
+        return logger.BeginDataScope(AnonymousObjectData(data));
+    }
 
-        private static IEnumerable<KeyValuePair<string, object?>> AnonymousObjectData(object data)
-        {
-            var properties = data.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(prop => prop.GetIndexParameters().Length == 0 && prop.GetMethod != null);
+    private static IEnumerable<KeyValuePair<string, object?>> AnonymousObjectData(object data)
+    {
+        var properties = data.GetType()
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(prop => prop.GetIndexParameters().Length == 0 && prop.GetMethod != null);
 
-            foreach (var prop in properties)
-                yield return new KeyValuePair<string, object?>(prop.Name, prop.GetValue(data));
-        }
+        foreach (var prop in properties)
+            yield return new KeyValuePair<string, object?>(prop.Name, prop.GetValue(data));
+    }
 
-        private sealed class LogData : IReadOnlyList<KeyValuePair<string, object?>>
-        {
-            private readonly IReadOnlyList<KeyValuePair<string, object?>> _data;
+    private sealed class LogData : IReadOnlyList<KeyValuePair<string, object?>>
+    {
+        private readonly IReadOnlyList<KeyValuePair<string, object?>> _data;
 
-            public LogData(IEnumerable<KeyValuePair<string, object?>> data) => _data = data is IReadOnlyList<KeyValuePair<string, object?>> list ? list : data.ToList();
+        public LogData(IEnumerable<KeyValuePair<string, object?>> data) => _data = data is IReadOnlyList<KeyValuePair<string, object?>> list ? list : data.ToList();
 
-            public override string ToString() => string.Join(", ", _data.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        public override string ToString() => string.Join(", ", _data.Select(kvp => $"{kvp.Key}={kvp.Value}"));
 
-            IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => _data.GetEnumerator();
-            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
-            int IReadOnlyCollection<KeyValuePair<string, object?>>.Count => _data.Count;
-            KeyValuePair<string, object?> IReadOnlyList<KeyValuePair<string, object?>>.this[int index] => _data[index];
-        }
+        IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => _data.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+        int IReadOnlyCollection<KeyValuePair<string, object?>>.Count => _data.Count;
+        KeyValuePair<string, object?> IReadOnlyList<KeyValuePair<string, object?>>.this[int index] => _data[index];
     }
 }

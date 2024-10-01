@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Nito.Logging;
 
 namespace WorkerService
 {
-    public class Worker : BackgroundService
+	public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
 
@@ -37,8 +34,7 @@ namespace WorkerService
             catch (Exception e)
             {
                 // Example code representing a high-level catch (e.g., an early exception handling middleware).
-                using (_logger.BeginCapturedExceptionLoggingScopes(e))
-                    _logger.LogError(e, "Unexpected error.");
+                _logger.LogError(e, "Unexpected error.");
                 throw;
             }
         }

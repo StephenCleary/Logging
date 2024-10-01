@@ -6,88 +6,87 @@ using System.Threading;
 using Microsoft.Extensions.Logging;
 using Nito.Disposables;
 
-namespace TestUtilities
+namespace TestUtilities;
+
+[ExcludeFromCodeCoverage]
+public sealed class InMemoryLoggerProvider : ILoggerProvider
 {
+    private readonly object _mutex = new object();
+    private readonly AsyncLocal<ImmutableStack<ImmutableDictionary<string, object>>> _scopeStack = new AsyncLocal<ImmutableStack<ImmutableDictionary<string, object>>>();
+
+    public void Dispose() { }
+
+    public ILogger CreateLogger(string categoryName) => new Logger(this, categoryName);
+
+    public ImmutableList<LogMessage> Messages { get; private set; } = ImmutableList<LogMessage>.Empty;
+
     [ExcludeFromCodeCoverage]
-    public sealed class InMemoryLoggerProvider : ILoggerProvider
+    public sealed class LogMessage
     {
-        private readonly object _mutex = new object();
-        private readonly AsyncLocal<ImmutableStack<ImmutableDictionary<string, object>>> _scopeStack = new AsyncLocal<ImmutableStack<ImmutableDictionary<string, object>>>();
+        public string CategoryName { get; set; }
+        public LogLevel LogLevel { get; set; }
+        public EventId EventId { get; set; }
+        public Exception Exception { get; set; }
+        public string Message { get; set; }
+        public IReadOnlyDictionary<string, object> ScopeValues { get; set; }
+    }
 
-        public void Dispose() { }
+    private void AddMessage(LogMessage message)
+    {
+        lock (_mutex)
+            Messages = Messages.Add(message);
+    }
 
-        public ILogger CreateLogger(string categoryName) => new Logger(this, categoryName);
+    private IDisposable PushScope(IEnumerable<KeyValuePair<string, object>> scopeData)
+    {
+        var originalScope = _scopeStack.Value;
+        var currentScope = originalScope ?? ImmutableStack<ImmutableDictionary<string, object>>.Empty;
+        var currentScopeData = currentScope.IsEmpty ? ImmutableDictionary<string, object>.Empty : currentScope.Peek();
+        currentScopeData = currentScopeData.SetItems(scopeData);
+        currentScope = currentScope.Push(currentScopeData);
+        _scopeStack.Value = currentScope;
+        return new AnonymousDisposable(() => _scopeStack.Value = originalScope);
+    }
 
-        public ImmutableList<LogMessage> Messages { get; private set; } = ImmutableList<LogMessage>.Empty;
-
-        [ExcludeFromCodeCoverage]
-        public sealed class LogMessage
+    private ImmutableDictionary<string, object> CurrentScopeData
+    {
+        get
         {
-            public string CategoryName { get; set; }
-            public LogLevel LogLevel { get; set; }
-            public EventId EventId { get; set; }
-            public Exception Exception { get; set; }
-            public string Message { get; set; }
-            public IReadOnlyDictionary<string, object> ScopeValues { get; set; }
+            var currentScope = _scopeStack.Value ?? ImmutableStack<ImmutableDictionary<string, object>>.Empty;
+            return currentScope.IsEmpty ? ImmutableDictionary<string, object>.Empty : currentScope.Peek();
+        }
+    }
+
+    [ExcludeFromCodeCoverage]
+    private sealed class Logger : ILogger
+    {
+        private readonly InMemoryLoggerProvider _provider;
+        private readonly string _categoryName;
+
+        public Logger(InMemoryLoggerProvider provider, string categoryName)
+        {
+            _provider = provider;
+            _categoryName = categoryName;
         }
 
-        private void AddMessage(LogMessage message)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            lock (_mutex)
-                Messages = Messages.Add(message);
-        }
+            var scopeData = _provider.CurrentScopeData;
+            scopeData = scopeData.SetItems(ScopeUtility.GetStructuredData(state));
 
-        private IDisposable PushScope(IEnumerable<KeyValuePair<string, object>> scopeData)
-        {
-            var originalScope = _scopeStack.Value;
-            var currentScope = originalScope ?? ImmutableStack<ImmutableDictionary<string, object>>.Empty;
-            var currentScopeData = currentScope.IsEmpty ? ImmutableDictionary<string, object>.Empty : currentScope.Peek();
-            currentScopeData = currentScopeData.SetItems(scopeData);
-            currentScope = currentScope.Push(currentScopeData);
-            _scopeStack.Value = currentScope;
-            return new AnonymousDisposable(() => _scopeStack.Value = originalScope);
-        }
-
-        private ImmutableDictionary<string, object> CurrentScopeData
-        {
-            get
+            _provider.AddMessage(new LogMessage
             {
-                var currentScope = _scopeStack.Value ?? ImmutableStack<ImmutableDictionary<string, object>>.Empty;
-                return currentScope.IsEmpty ? ImmutableDictionary<string, object>.Empty : currentScope.Peek();
-            }
+                CategoryName = _categoryName,
+                LogLevel = logLevel,
+                EventId = eventId,
+                Exception = exception,
+                Message = formatter(state, exception),
+                ScopeValues = scopeData,
+            });
         }
 
-        [ExcludeFromCodeCoverage]
-        private sealed class Logger : ILogger
-        {
-            private readonly InMemoryLoggerProvider _provider;
-            private readonly string _categoryName;
+        public bool IsEnabled(LogLevel logLevel) => true;
 
-            public Logger(InMemoryLoggerProvider provider, string categoryName)
-            {
-                _provider = provider;
-                _categoryName = categoryName;
-            }
-
-            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-            {
-                var scopeData = _provider.CurrentScopeData;
-                scopeData = scopeData.SetItems(ScopeUtility.GetStructuredData(state));
-
-                _provider.AddMessage(new LogMessage
-                {
-                    CategoryName = _categoryName,
-                    LogLevel = logLevel,
-                    EventId = eventId,
-                    Exception = exception,
-                    Message = formatter(state, exception),
-                    ScopeValues = scopeData,
-                });
-            }
-
-            public bool IsEnabled(LogLevel logLevel) => true;
-
-            public IDisposable BeginScope<TState>(TState state) => _provider.PushScope(ScopeUtility.GetStructuredData(state));
-        }
+        public IDisposable BeginScope<TState>(TState state) => _provider.PushScope(ScopeUtility.GetStructuredData(state));
     }
 }

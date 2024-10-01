@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ExceptionLoggingScopeUnitTests;
 
-public class NestedExceptionUnitTests
+public class LegacyNestedExceptionUnitTests
 {
     [Fact]
     public void WrapperWithoutScopes_PropagatesInnerExceptionScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
@@ -27,7 +27,8 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "message");
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
         }
 
         Assert.Collection(logs.Messages,
@@ -53,10 +54,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -82,10 +84,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message =>
             {
                 Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
@@ -115,10 +118,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message =>
             {
                 Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
@@ -148,10 +152,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -177,10 +182,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -206,10 +212,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -235,10 +242,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -267,10 +275,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(5, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -299,10 +308,11 @@ public class NestedExceptionUnitTests
         }
         catch (Exception ex)
         {
-			logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(5, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -333,23 +343,17 @@ public class NestedExceptionUnitTests
         {
             try
             {
-                try
+                using (logger.BeginScope("{test}", 13))
                 {
-                    using (logger.BeginScope("{test}", 13))
-                    {
-                        throw new InvalidOperationException();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException("wrapper", ex);
+                    throw new InvalidOperationException();
                 }
             }
             catch (Exception ex)
             {
-				logger.LogError(ex, "message");
-			}
-		}
+                using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                    logger.LogError("message");
+            }
+        }
 
         Assert.Collection(logs.Messages,
             message =>
@@ -366,23 +370,17 @@ public class NestedExceptionUnitTests
         {
             try
             {
-                try
+                using (logger.BeginScope("{test}", 13))
                 {
-                    using (logger.BeginScope("{test}", 13))
-                    {
-                        throw new InvalidOperationException();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException("wrapper", ex);
+                    throw new InvalidOperationException();
                 }
             }
             catch (Exception ex)
             {
-				logger.LogError(ex, "message");
-			}
-		}
+                using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                    logger.LogError("message");
+            }
+        }
 
         Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
@@ -393,25 +391,19 @@ public class NestedExceptionUnitTests
     {
         try
         {
-            try
+            using (logger.BeginScope("{test}", 13))
             {
-                using (logger.BeginScope("{test}", 13))
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("wrapper", ex);
+                throw new InvalidOperationException();
             }
         }
         catch (Exception ex)
         {
             using (logger.BeginScope("{outer}", 7))
-				logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message =>
             {
                 Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
@@ -424,25 +416,40 @@ public class NestedExceptionUnitTests
     {
         try
         {
-            try
+            using (logger.BeginScope("{test}", 13))
             {
-                using (logger.BeginScope("{test}", 13))
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("wrapper", ex);
+                throw new InvalidOperationException();
             }
         }
         catch (Exception ex)
         {
             using (logger.BeginScope("{test}", 7))
-				logger.LogError(ex, "message");
-		}
+            using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+                logger.LogError("message");
+        }
 
-		Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+    });
+
+    [Fact]
+    public void UnthrownWrapperWithLocalScope_SameKey_LocalScopesLast_TakesLocalScopes() => LoggingTestUtility.InitializeLogs((logs, logger) =>
+    {
+        try
+        {
+            using (logger.BeginScope("{test}", 13))
+            {
+                throw new InvalidOperationException();
+            }
+        }
+        catch (Exception ex)
+        {
+            using (logger.BeginCapturedExceptionLoggingScopes(new InvalidOperationException("wrapper", ex)))
+            using (logger.BeginScope("{test}", 7))
+                logger.LogError("message");
+        }
+
+        Assert.Collection(logs.Messages,
+            message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
     });
 }

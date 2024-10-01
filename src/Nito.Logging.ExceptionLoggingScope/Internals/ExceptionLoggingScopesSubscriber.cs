@@ -1,45 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Text;
 
-namespace Nito.Logging.Internals
+namespace Nito.Logging.Internals;
+
+/// <summary>
+/// A type that monitors the current <see cref="AppDomain"/> for exceptions and attaches logging scopes to them when thrown.
+/// </summary>
+public sealed class ExceptionLoggingScopesSubscriber : IDisposable
 {
-    /// <summary>
-    /// A type that monitors the current <see cref="AppDomain"/> for exceptions and attaches logging scopes to them when thrown.
-    /// </summary>
-    public sealed class ExceptionLoggingScopesSubscriber : IDisposable
+    private readonly EventHandler<FirstChanceExceptionEventArgs> _subscription;
+
+/// <summary>
+/// Constructor.
+/// </summary>
+public ExceptionLoggingScopesSubscriber(CaptureLoggingScopesLoggerProvider loggerProvider)
     {
-        private readonly EventHandler<FirstChanceExceptionEventArgs> _subscription;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public ExceptionLoggingScopesSubscriber(LoggingScopes loggingScopes)
+        _subscription = (_, args) =>
         {
-            _subscription = (_, args) =>
-            {
-                var exceptionScopes = args.Exception.TryFindLoggingScopes() ?? ImmutableStack<ILoggingScope>.Empty;
-                var currentScopes = loggingScopes.CurrentScopes ?? ImmutableStack<ILoggingScope>.Empty;
+            var exceptionScopes = args.Exception.TryFindLoggingScopes() ?? [];
+            var currentScopes = loggerProvider.TryGetCurrentScopes() ?? [];
 
-                // Combine the exception scopes and current scopes:
-                // - Start with the exception scopes.
-                // - Add in any current scopes that are not already included in the exception scopes.
+            IReadOnlyList<object> combinedScopes = [..exceptionScopes, ..currentScopes.Where(x => !exceptionScopes.Contains(x))];
 
-                foreach (var scope in currentScopes.Reverse().Where(x => !exceptionScopes.Contains(x)))
-                    exceptionScopes = exceptionScopes.Push(scope);
+            if (combinedScopes.Count != 0)
+                args.Exception.SetLoggingScopes(combinedScopes);
+        };
+        AppDomain.CurrentDomain.FirstChanceException += _subscription;
+}
 
-                if (!exceptionScopes.IsEmpty)
-                    args.Exception.SetLoggingScopes(exceptionScopes);
-            };
-            AppDomain.CurrentDomain.FirstChanceException += _subscription;
-        }
-
-        /// <summary>
-        /// No longer attaches scopes to exceptions.
-        /// </summary>
-        public void Dispose() => AppDomain.CurrentDomain.FirstChanceException -= _subscription;
-    }
+    /// <summary>
+    /// No longer attaches scopes to exceptions.
+    /// </summary>
+    public void Dispose() => AppDomain.CurrentDomain.FirstChanceException -= _subscription;
 }

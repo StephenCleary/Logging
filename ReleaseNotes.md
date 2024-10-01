@@ -1,5 +1,7 @@
-(Unreleased)
+2.0.0
 
+- [Major] Dropped support for .NET Framework 4.6.1. .NET Framework 4.6.2 is still supported.
+- [Major] Simplified usage of exception logging scopes.
 - [Feature] Upgraded dependencies.
 - [Feature] Prepared code for trimming/single-file/AOT support (`net8.0` only). Trimming/single-file/AOT is not fully supported in this release.
 

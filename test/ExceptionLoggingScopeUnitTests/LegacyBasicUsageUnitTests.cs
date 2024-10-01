@@ -1,11 +1,12 @@
 ﻿using System;
 using ExceptionLoggingScopeUnitTests.Utility;
 using Microsoft.Extensions.Logging;
+using Nito.Logging;
 using Xunit;
 
 namespace ExceptionLoggingScopeUnitTests;
 
-public class BasicUsageUnitTests
+public class LegacyBasicUsageUnitTests
 {
     [Fact]
     public void ThrowScope_IsCaptured() => LoggingTestUtility.InitializeLogs((logs, logger) =>
@@ -19,7 +20,8 @@ public class BasicUsageUnitTests
         }
         catch (Exception ex)
         {
-		logger.LogError(ex, "message");
+		using (logger.BeginCapturedExceptionLoggingScopes(ex))
+			logger.LogError("message");
 	}
 
 	Assert.Collection(logs.Messages,
@@ -39,10 +41,11 @@ public class BasicUsageUnitTests
         }
         catch (Exception ex)
         {
-		logger.LogError(ex, "message");
-	}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message =>
             {
                 Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
@@ -63,10 +66,11 @@ public class BasicUsageUnitTests
         }
         catch (Exception ex)
         {
-		logger.LogError(ex, "message");
-	}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -84,9 +88,10 @@ public class BasicUsageUnitTests
             }
             catch (Exception ex)
             {
-			logger.LogError(ex, "message");
-		}
-	}
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+        }
 
         Assert.Collection(logs.Messages,
             message =>
@@ -110,9 +115,10 @@ public class BasicUsageUnitTests
             }
             catch (Exception ex)
             {
-			logger.LogError(ex, "message");
-		}
-	}
+                using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                    logger.LogError("message");
+            }
+        }
 
         Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
@@ -131,10 +137,11 @@ public class BasicUsageUnitTests
         catch (Exception ex)
         {
             using (logger.BeginScope("{test2}", 7))
-			logger.LogError(ex, "message");
-	}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message =>
             {
                 Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
@@ -155,10 +162,32 @@ public class BasicUsageUnitTests
         catch (Exception ex)
         {
             using (logger.BeginScope("{test}", 7))
-			logger.LogError(ex, "message");
-	}
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+                logger.LogError("message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+    });
+
+    [Fact]
+    public void ThrowScope_WhenLogScopeHasSameKeyAndIsLast_LogScopeOverridesThrowScope() => LoggingTestUtility.InitializeLogs((logs, logger) =>
+    {
+        try
+        {
+            using (logger.BeginScope("{test}", 13))
+            {
+                throw new InvalidOperationException();
+            }
+        }
+        catch (Exception ex)
+        {
+            using (logger.BeginCapturedExceptionLoggingScopes(ex))
+            using (logger.BeginScope("{test}", 7))
+                logger.LogError("message");
+        }
+
+        Assert.Collection(logs.Messages,
+            message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
     });
 }

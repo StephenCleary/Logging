@@ -16,15 +16,15 @@ First, install [the `Nito.Logging` package](https://www.nuget.org/packages/Nito.
 
 To attach data scopes to your logs, call `BeginDataScope` on any `ILogger` or `ILogger<T>`. You can pass an anonymous object, any number of `(string, object)` tuples, or a collection of `KeyValuePair<string, object>` (such as a `Dictionary<string, object>`). See [the unit tests](https://github.com/StephenCleary/Logging/blob/main/test/DataScopesUnitTests/BasicUsageUnitTests.cs) for examples.
 
-To preserve logging scopes for exceptions:
-1. Add a call to `AddExceptionLoggingScopes()` in your service registration.
-1. Call `ILogger.BeginCapturedExceptionLoggingScopes(Exception)` before logging the exception.
+To preserve logging scopes for exceptions, add a call to `AddExceptionLoggingScopes()` in your service registration _after_ all loggers have been configured.
 
 Your service registration will look something like this:
 
 ```C#
 public void ConfigureServices(IServiceCollection services)
 {
+    /* Configure all loggers here */
+    ...
     services.AddExceptionLoggingScopes();
     ...
 }
@@ -55,8 +55,7 @@ public class ExceptionLoggingMiddleware
         }
         catch (Exception ex)
         {
-            using (_logger.BeginCapturedExceptionLoggingScopes(ex))
-                _logger.Log(ex, "An error occurred.");
+            _logger.Log(ex, "An error occurred.");
             throw;
         }
     }
