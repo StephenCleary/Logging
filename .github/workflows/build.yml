@@ -1,4 +1,7 @@
-# build.yml v1.6
+# build.yml v1.7
+# 1.7:
+#     - Updates: actions/cache@v4, actions/upload-artifact@v4, codecov/codecov-action@v4
+#     - Note: This requires secrets.CODECOV_TOKEN to be set.
 # 1.6:
 #     - Use --getProperty:Version instead of Nito.ProjProps.
 #     - Updates: acitons/checkout@v4
@@ -48,7 +51,7 @@ jobs:
         fetch-depth: 0 # Required by WyriHaximus/github-action-get-previous-tag@v1
 
     - name: Cache nuget
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
         key: nuget-${{ hashFiles('**/*.csproj') }}-${{ hashFiles('**/*.props') }}
@@ -71,7 +74,7 @@ jobs:
         dotnet pack --configuration Release --no-build
 
     - name: Upload package artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: nuget-packages
         path: |
@@ -79,7 +82,9 @@ jobs:
           **/*.snupkg
 
     - name: Publish code coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Publish packages
       if: env.NEWTAG != steps.existingtag.outputs.tag
