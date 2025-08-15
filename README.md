@@ -65,6 +65,42 @@ public class ExceptionLoggingMiddleware
 app.UseMiddleware<ExceptionLoggingMiddleware>();
 ```
 
+## Problem: options and settings may not be preserved
+
+There is a possibility that some logging frameworks (e.g., [NLog](https://github.com/StephenCleary/Logging/issues/1)) may not honor their options/settings when you use `AddExceptionLoggingScopes`.
+
+In this case, you can use the old (v1) style of applying logging scopes by calling `BeginCapturedExceptionLoggingScopes` when you log the exception:
+
+```C#
+public class ExceptionLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionLoggingMiddleware> _logger;
+
+    public ExceptionLoggingMiddleware(RequestDelegate next, ILogger<ExceptionLoggingMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task Invoke(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (Exception ex)
+        {
+            using (_logger.BeginCapturedExceptionLoggingScopes(ex))
+                _logger.Log(ex, "An error occurred.");
+            throw;
+        }
+    }
+}
+```
+
+This is guaranteed to work regardless of logger quirks, but is annoying because you have to add it at every point your code logs an exception.
+
 # Alternatives
 
 - [Throw context enricher for Serilog](https://github.com/Tolyandre/serilog-throw-context-enricher) - essentially the same as `ExceptionLoggingScope`, but for Serilog only.
