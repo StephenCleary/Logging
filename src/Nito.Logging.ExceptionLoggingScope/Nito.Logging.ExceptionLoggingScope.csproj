@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageReference Include="Nito.ConnectedProperties" Version="4.1.1" />
     <PackageReference Include="Nito.Disposables" Version="2.5.0" />
-    <PackageReference Include="Scrutor" Version="5.0.1" />
+    <PackageReference Include="Scrutor" Version="5.1.2" />
   </ItemGroup>
 
   <ItemGroup>
