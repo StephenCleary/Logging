@@ -19,10 +19,10 @@ public class BasicUsageUnitTests
         }
         catch (Exception ex)
         {
-		logger.LogError(ex, "message");
-	}
+            logger.LogError(ex, "message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -39,10 +39,10 @@ public class BasicUsageUnitTests
         }
         catch (Exception ex)
         {
-		logger.LogError(ex, "message");
-	}
+            logger.LogError(ex, "message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message =>
             {
                 Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
@@ -63,10 +63,10 @@ public class BasicUsageUnitTests
         }
         catch (Exception ex)
         {
-		logger.LogError(ex, "message");
-	}
+            logger.LogError(ex, "message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(7, Assert.Contains("test", message.ScopeValues)));
     });
 
@@ -84,9 +84,9 @@ public class BasicUsageUnitTests
             }
             catch (Exception ex)
             {
-			logger.LogError(ex, "message");
-		}
-	}
+                logger.LogError(ex, "message");
+            }
+        }
 
         Assert.Collection(logs.Messages,
             message =>
@@ -110,9 +110,9 @@ public class BasicUsageUnitTests
             }
             catch (Exception ex)
             {
-			logger.LogError(ex, "message");
-		}
-	}
+                logger.LogError(ex, "message");
+            }
+        }
 
         Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
@@ -131,10 +131,10 @@ public class BasicUsageUnitTests
         catch (Exception ex)
         {
             using (logger.BeginScope("{test2}", 7))
-			logger.LogError(ex, "message");
-	}
+                logger.LogError(ex, "message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message =>
             {
                 Assert.Equal(13, Assert.Contains("test", message.ScopeValues));
@@ -155,10 +155,10 @@ public class BasicUsageUnitTests
         catch (Exception ex)
         {
             using (logger.BeginScope("{test}", 7))
-			logger.LogError(ex, "message");
-	}
+                logger.LogError(ex, "message");
+        }
 
-	Assert.Collection(logs.Messages,
+        Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
     });
 }
