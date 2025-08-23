@@ -45,4 +45,49 @@ public class LogFilterUnitTests
         var observed = Assert.Single(logs.Messages);
         Assert.Equal("Test", observed.Message);
     }
+
+    [Fact]
+    public void CustomCategory_IsHonored()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging(c => c
+            .AddFilter<InMemoryLoggerProvider>("cat1", LogLevel.Warning)
+            .AddFilter<InMemoryLoggerProvider>("cat2", LogLevel.Information));
+        var logs = new InMemoryLoggerProvider();
+        services.AddSingleton<ILoggerProvider>(logs);
+        services.AddExceptionLoggingScopes();
+        using var provider = services.BuildServiceProvider();
+
+        var logger1 = provider.GetRequiredService<ILoggerFactory>().CreateLogger("cat1");
+        var logger2 = provider.GetRequiredService<ILoggerFactory>().CreateLogger("cat2");
+
+        logger1.LogInformation("Should not appear");
+        logger2.LogInformation("Test");
+
+        var observed = Assert.Single(logs.Messages);
+        Assert.Equal("Test", observed.Message);
+    }
+
+    [Fact]
+    public void CustomFilterDelegate_IsHonored()
+    {
+        var services = new ServiceCollection();
+        var invoked = false;
+        services.AddLogging(c => c.AddFilter<InMemoryLoggerProvider>((_, _) =>
+        {
+            invoked = true;
+            return false;
+        }));
+        var logs = new InMemoryLoggerProvider();
+        services.AddSingleton<ILoggerProvider>(logs);
+        services.AddExceptionLoggingScopes();
+        using var provider = services.BuildServiceProvider();
+
+        var logger = provider.GetRequiredService<ILogger<LogFilterUnitTests>>();
+
+        logger.LogInformation("Should not appear");
+
+        Assert.Empty(logs.Messages);
+        Assert.True(invoked);
+    }
 }
