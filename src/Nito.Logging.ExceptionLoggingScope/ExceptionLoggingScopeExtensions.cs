@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nito.Disposables;
 using Nito.Logging.Internals;
 
@@ -29,8 +30,8 @@ public static class ExceptionLoggingScopeExtensions
         {
             _ = serviceProvider.GetService<ExceptionLoggingScopesSubscriber>();
             return innerLoggerProvider is ISupportExternalScope ?
-                    new ExceptionLoggingScopesLoggerProvider(innerLoggerProvider) :
-                    new ExceptionLoggingScopesCustomLoggerProvider(innerLoggerProvider);
+                    new ExceptionLoggingScopesLoggerProvider(innerLoggerProvider, serviceProvider.GetRequiredService<IOptionsMonitor<LoggerFilterOptions>>()) :
+                    new ExceptionLoggingScopesCustomLoggerProvider(innerLoggerProvider, serviceProvider.GetRequiredService<IOptionsMonitor<LoggerFilterOptions>>());
         });
         services.AddSingleton<ILoggerProvider>(provider => provider.GetRequiredService<CaptureLoggingScopesLoggerProvider>());
         return services;

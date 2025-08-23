@@ -1,6 +1,7 @@
 <Project>
   <!--
-      Directory.Build.targets v1.1
+      Directory.Build.targets v1.1 (modified)
+      - Inherit instead of override NoWarn.
       - 1.1 Add support for tool packages.
       - 1.0 Initial release.
   -->
@@ -9,7 +10,7 @@
   <PropertyGroup Condition="'$(IsMetapackage)'=='true'">
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
-    <NoWarn>NU5128</NoWarn>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(ToolCommandName)'!=''">
