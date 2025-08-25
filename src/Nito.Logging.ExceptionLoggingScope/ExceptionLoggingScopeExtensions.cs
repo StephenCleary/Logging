@@ -23,12 +23,12 @@ public static class ExceptionLoggingScopeExtensions
         services.AddSingleton<CaptureLoggingScopesLoggerProvider>();
         services.AddSingleton<ExceptionLoggingScopesSubscriber>();
         services.AddLogging(x => x
-            .AddFilter<CaptureLoggingScopesLoggerProvider>(null, LogLevel.Trace)
+            .AddFilter<CaptureLoggingScopesLoggerProvider>(null, LogLevel.None)
             .AddFilter<ExceptionLoggingScopesLoggerProvider>(null, LogLevel.Trace)
             .AddFilter<ExceptionLoggingScopesCustomLoggerProvider>(null, LogLevel.Trace));
         services.Decorate<ILoggerProvider>((innerLoggerProvider, serviceProvider) =>
         {
-            _ = serviceProvider.GetService<ExceptionLoggingScopesSubscriber>();
+            _ = serviceProvider.GetRequiredService<ExceptionLoggingScopesSubscriber>();
             return innerLoggerProvider is ISupportExternalScope ?
                     new ExceptionLoggingScopesLoggerProvider(innerLoggerProvider, serviceProvider.GetRequiredService<IOptionsMonitor<LoggerFilterOptions>>()) :
                     new ExceptionLoggingScopesCustomLoggerProvider(innerLoggerProvider, serviceProvider.GetRequiredService<IOptionsMonitor<LoggerFilterOptions>>());

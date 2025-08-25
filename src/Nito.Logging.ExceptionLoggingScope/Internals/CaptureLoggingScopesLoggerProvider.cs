@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Nito.Logging.Internals;
 
@@ -38,23 +37,11 @@ public sealed class CaptureLoggingScopesLoggerProvider : ILoggerProvider, ISuppo
 			_externalScopeProvider = scopeProvider;
 	}
 
-	ILogger ILoggerProvider.CreateLogger(string categoryName) => new Logger(this);
+	ILogger ILoggerProvider.CreateLogger(string categoryName) => NullLogger.Instance;
 
 	private IExternalScopeProvider? TryGetExternalScopeProvider()
 	{
 		lock (_mutex)
 			return _externalScopeProvider;
-	}
-
-	private sealed class Logger(CaptureLoggingScopesLoggerProvider provider) : ILogger
-    {
-        private readonly CaptureLoggingScopesLoggerProvider _provider = provider;
-
-		public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) { }
-
-        public bool IsEnabled(LogLevel logLevel) => false;
-
-		public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>
-			_provider.TryGetExternalScopeProvider()?.Push(state)!;
 	}
 }
