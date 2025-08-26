@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using ExceptionLoggingScopeUnitTests.Utility;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -160,5 +161,33 @@ public class BasicUsageUnitTests
 
         Assert.Collection(logs.Messages,
             message => Assert.Equal(13, Assert.Contains("test", message.ScopeValues)));
+    });
+
+    [Fact]
+    public void ThrowScope_CapturesActivity() => LoggingTestUtility.InitializeLogs((logs, logger) =>
+    {
+        string? activitySpanId = null;
+        try
+        {
+            var activitySource = new ActivitySource(nameof(ThrowScope_CapturesActivity));
+            using var listener = new ActivityListener
+            {
+                ShouldListenTo = source => source.Name == nameof(ThrowScope_CapturesActivity),
+                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            };
+            ActivitySource.AddActivityListener(listener);
+            using (var activity = activitySource.StartActivity())
+            {
+                activitySpanId = activity.SpanId.ToString();
+                throw new InvalidOperationException();
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "message");
+        }
+
+        Assert.Collection(logs.Messages,
+            message => Assert.Equal(activitySpanId, Assert.Contains("SpanId", message.ScopeValues)));
     });
 }

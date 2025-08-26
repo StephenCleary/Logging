@@ -11,7 +11,7 @@ public class LoggingTestUtility
     public static void InitializeLogs(Action<InMemoryLoggerProvider, ILogger> action)
     {
         var services = new ServiceCollection();
-        services.AddLogging();
+        services.AddLogging(l => l.Configure(o => o.ActivityTrackingOptions = ActivityTrackingOptions.SpanId));
         var logs = new InMemoryLoggerProvider();
         services.AddSingleton<ILoggerProvider>(logs);
         services.AddExceptionLoggingScopes();
